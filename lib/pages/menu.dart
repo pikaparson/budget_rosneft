@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:budget_rosneft/menuPages/types.dart';
 
 class Menu extends StatelessWidget {
   const Menu({super.key});
@@ -28,7 +27,7 @@ class Menu extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                // Navigator.pushNamed(context, '/types');
+                Navigator.pushNamed(context, '/categories');
               },
               child: Text('Категория', style: TextStyle(fontSize: 12, color: Colors.blueGrey[800])),
             ),
@@ -37,7 +36,7 @@ class Menu extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                //  Navigator.pushNamed(context, '/types');
+                Navigator.pushNamed(context, '/statistics');
               },
               child: Text('Статистика', style: TextStyle(fontSize: 12, color: Colors.blueGrey[800])),
             ),

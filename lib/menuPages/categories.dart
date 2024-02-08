@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Types extends StatefulWidget {
-  const Types({super.key});
+class Categories extends StatefulWidget {
+  const Categories({super.key});
 
   @override
-  State<Types> createState() => _TypesState();
+  State<Categories> createState() => _CategoriesState();
 }
 
-class _TypesState extends State<Types> {
+class _CategoriesState extends State<Categories> {
 
   List todoList = [];
 
@@ -17,7 +17,7 @@ class _TypesState extends State<Types> {
   void initState() {
     super.initState();
 
-    todoList.addAll(['Приход', 'Расход', 'Подарок кому-либо']);
+    todoList.addAll(['Зарплата', 'Покупка продуктов', 'Подарок подруге']);
   }
 
   @override
@@ -26,7 +26,7 @@ class _TypesState extends State<Types> {
       backgroundColor: Colors.blueGrey[400],
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[700],
-        title: Text('Типы транзакций'),
+        title: Text('Категории транзакций'),
         centerTitle: true,
       ),
       body: ListView.builder(
