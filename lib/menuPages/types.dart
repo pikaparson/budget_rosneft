@@ -1,23 +1,162 @@
 import 'package:flutter/material.dart';
+import 'package:budget_rosneft/data_base/transaction_type.dart';
 
-class Types extends StatefulWidget {
-  const Types({super.key});
+class Types extends StatelessWidget {
+  const Types({Key? key}) : super(key: key);
 
   @override
-  State<Types> createState() => _TypesState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      // убирает баннер debug
+        debugShowCheckedModeBanner: false,
+        home: const TypesPage());
+  }
 }
 
-class _TypesState extends State<Types> {
+class TypesPage extends StatefulWidget {
+  const TypesPage({Key? key}) : super(key: key);
 
-  List todoList = [];
+  @override
+  State<TypesPage> createState() => _HomePageState();
+}
 
-  late String _userToDo;
+class _HomePageState extends State<TypesPage> {
+  // Все журналы
+  List<Map<String, dynamic>> _journals = [];
+
+  bool _isLoading = true;
+  // Эта функция используется, чтобы выгрузить все данные из БД
+  void _refreshJournals() async {
+    final data = await SQLHelper.getItems();
+    setState(() {
+      _journals = data;
+      _isLoading = false;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    _refreshJournals(); //  загрузка журнала в начале программы
+  }
 
-    todoList.addAll(['Приход', 'Расход', 'Подарок кому-либо']);
+  int profitOrNot = 0;
+  final TextEditingController _nameController = TextEditingController();
+
+  // Эта функция будет активирована при нажатии floatingActionB
+  // Она также будет активирована, когда обновляем элемент
+  void _showForm(int? id) async {
+    if (id != null) {
+      // id == null -> create new item
+      // id != null -> update an existing item
+      final existingJournal =
+      _journals.firstWhere((element) => element['id'] == id);
+      _nameController.text = existingJournal['name'];
+    }
+
+    // нижняя шторка для добавления объекта
+    showModalBottomSheet(
+        context: context,
+        elevation: 5,
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        builder: (_) => Container(
+          padding: EdgeInsets.only(
+            top: 15,
+            left: 15,
+            right: 15,
+            // это предотвратит закрытие текстовых полей программной клавиатурой
+            bottom: MediaQuery.of(context).viewInsets.bottom + 120,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // поле для ввода имени
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(hintText: 'Названите типа'),
+              ),
+              // коробка с отступом
+              const SizedBox(
+                height: 20,
+                child: Text('Данный тип добавляет деньги в бюджет?')
+              ),
+              //добавление нового или обновление объекта
+              ElevatedButton(
+                onPressed: () async {
+                  // Сохранение нового журнала
+                  // Добавление объекта
+                  if (id == null) {
+                    await _addItem();
+                  }
+                  // Обновление объекта
+                  if (id != null) {
+                    await _updateItem(id);
+                  }
+                  // Очистим поле
+                  _nameController.text = '';
+                  profitOrNot = 1;
+                  // закрываем шторку
+                  if (!mounted) return;
+                  Navigator.of(context).pop();
+                },
+                child: Text('Да', style: TextStyle(color: Colors.black)),
+              ),
+              const SizedBox(
+                  height: 5,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (id == null) {
+                    await _addItem();
+                  }
+                  if (id != null) {
+                    await _updateItem(id);
+                  }
+                  // Очистим поле
+                  _nameController.text = '';
+                  profitOrNot = 0;
+                  // закрываем шторку
+                  if (!mounted) return;
+                  Navigator.of(context).pop();
+                },
+                child: Text('Нет', style: TextStyle(color: Colors.black)),
+              ),const SizedBox(
+                height: 5,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Отмена', style: TextStyle(color: Colors.black)),
+              ),
+            ],
+          ),
+        ));
+  }
+
+// Вставить новый журнал в базу данных
+  Future<void> _addItem() async {
+    await SQLHelper.createItem(
+        _nameController.text, profitOrNot);
+    _refreshJournals();
+  }
+
+  // Обновить существующий журнал
+  Future<void> _updateItem(int id) async {
+    await SQLHelper.updateItem(
+        id, _nameController.text, profitOrNot);
+    _refreshJournals();
+  }
+
+  // Удалить объект
+  void _deleteItem(int id) async {
+    await SQLHelper.deleteItem(id);
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Successfully deleted a journal!'),
+    ));
+    _refreshJournals();
   }
 
   @override
@@ -25,101 +164,45 @@ class _TypesState extends State<Types> {
     return Scaffold(
       backgroundColor: Colors.blueGrey[400],
       appBar: AppBar(
+        title: const Text('Типы транзакции'),
         backgroundColor: Colors.blueGrey[700],
-        title: Text('Типы транзакций'),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: todoList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Dismissible(
-            key: Key(todoList[index]),
-            child: Card(
-              child: ListTile(
-                title: Text(todoList[index]),
-                trailing: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        todoList.removeAt(index);
-                      });
-                    },
-                    icon: Icon(
-                      Icons.delete_outline,
-                      color: Colors.blueAccent,
-                    )
+      body: _isLoading
+          ? const Center(
+        child: CircularProgressIndicator(),
+      )
+          : ListView.builder(
+        itemCount: _journals.length,
+        itemBuilder: (context, index) => Card(
+          color: Colors.white,
+          margin: const EdgeInsets.all(15),
+          child: ListTile(
+              title: Text(_journals[index]['name']),
+              subtitle: Text(_journals[index]['profit'] == 0 ? 'Увеличивает бюджет' : 'Уменьшает бюджет'),
+              trailing: SizedBox(
+                width: 100,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () => _showForm(_journals[index]['id']),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () =>
+                          _deleteItem(_journals[index]['id']),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            onDismissed: (direction) {
-              if (direction == DismissDirection.endToStart || direction == DismissDirection.startToEnd) {
-                setState(() {
-                  todoList.removeAt(index);
-                });
-              }
-            },
-          );
-        },
+              )),
+        ),
       ),
-
-      floatingActionButton: FloatingActionButton (
-          onPressed: () {
-            showDialog(
-                context: context, //context - страничка, на которой мы все выполняем
-                builder: (BuildContext context) { //как функция
-                  return AlertDialog(
-                      title: Text('Добавить дело'),
-                      content: TextField( // ввод инфы пользователем
-                        onChanged: (String value) {
-                          _userToDo = value; // без setstate, т.к. пользователю инфа не видна
-                        }, // срабатывает при вводе инфы
-                      ),
-                      actions: [ // добавим кнопки, с помощью массива будет легче
-                        ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                //todoList.add(_userToDo);
-                              });
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text('Этот тип увеличивает бюджет?'),
-                                      actions: [
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();//НЕ ВСЕ ОКНА
-                                              },
-                                            child: Text('Да')),
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text('Нет')),
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text('Отмена'))
-                                      ],
-                                    );
-                                  });
-                            },
-                            child: Text('Продолжить')),
-                        ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); //закрывает все всплывающие окна
-                            },
-                            child: Text('Отмена')),
-                      ]
-                  );
-                });
-          },
-          child: Icon(
-            Icons.add_box,
-            color: Colors.blueGrey[600],
-          )
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        child: const Icon(Icons.add),
+        onPressed: () => _showForm(null),
       ),
-
     );
   }
 }

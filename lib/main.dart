@@ -10,6 +10,7 @@ void main() async {
   runApp(MaterialApp(
     // Удалить баннер отладки
     debugShowCheckedModeBanner: false,
+    title: 'Семейный бюджет',
     theme: ThemeData(
       primaryColor: Colors.blueAccent,
     ),

@@ -18,7 +18,7 @@ class Menu extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/types');
+                Navigator.pushNamedAndRemoveUntil(context, '/types', (route) => true);
               },
               child: Text('Типы транзакций', style: TextStyle(fontSize: 12, color: Colors.blueGrey[800]),),
             ),
@@ -27,7 +27,7 @@ class Menu extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/categories');
+                Navigator.pushNamedAndRemoveUntil(context, '/categories', (route) => true);
               },
               child: Text('Категория', style: TextStyle(fontSize: 12, color: Colors.blueGrey[800])),
             ),
@@ -36,7 +36,7 @@ class Menu extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/statistics');
+                Navigator.pushNamedAndRemoveUntil(context, '/statistics', (route) => true);
               },
               child: Text('Статистика', style: TextStyle(fontSize: 12, color: Colors.blueGrey[800])),
             ),
