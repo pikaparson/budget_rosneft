@@ -29,20 +29,25 @@ class SQLHelper {
     final data = {'name': name, 'profit': profit};
     final id = await db.insert('types', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
+    await db.close();
     return id;
   }
 
   // Прочитать все элементы (журнал)
   static Future<List<Map<String, dynamic>>> getItems() async {
     final db = await SQLHelper.db();
-    return db.query('types', orderBy: "id");
+    final dbHELP = db.query('types', orderBy: "id");
+    await db.close();
+    return dbHELP;
   }
 
   // Прочитать элемент по id
   // Не используется, на всякий случай здесь
   static Future<List<Map<String, dynamic>>> getItem(int id) async {
     final db = await SQLHelper.db();
-    return db.query('types', where: "id = ?", whereArgs: [id], limit: 1);
+    final dbHELP = db.query('types', where: "id = ?", whereArgs: [id], limit: 1);
+    await db.close();
+    return dbHELP;
   }
 
   // Обновление объекта по id
@@ -54,6 +59,7 @@ class SQLHelper {
       'createdAt': DateTime.now().toString()
     };
     final result = await db.update('types', data, where: "id = ?", whereArgs: [id]);
+    await db.close();
     return result;
   }
 
@@ -62,8 +68,10 @@ class SQLHelper {
     final db = await SQLHelper.db();
     try {
       await db.delete("types", where: "id = ?", whereArgs: [id]);
+      await db.close();
     } catch (err) {
       debugPrint("Something went wrong when deleting an item: $err");
+      await db.close();
     }
   }
 }
