@@ -1,8 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
+
+
 //создание таблицы
 class SQLHelperType {
+
+  static var isOpen = false;
+
   static Future<void> createTables(sql.Database database) async {
     await database.execute("""CREATE TABLE types(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,

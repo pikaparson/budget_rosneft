@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:budget_rosneft/data_base/transaction_type.dart';
+//import 'package:budget_rosneft/data_base/transaction_type.dart';
+import 'package:budget_rosneft/DataBase/DB_create.dart';
+
+
 
 class Types extends StatelessWidget {
   const Types({Key? key}) : super(key: key);
@@ -23,13 +26,21 @@ class TypesPage extends StatefulWidget {
 class _HomePageState extends State<TypesPage> {
   // Все журналы
   List<Map<String, dynamic>> _journals = [];
-
   bool _isLoading = true;
+
   // Эта функция используется, чтобы выгрузить все данные из БД
   void _refreshJournals() async {
-    final data = await SQLHelperType.getItems();
+    if (SQLHelper.flag == 0)
+    {
+      SQLHelper.flag = 1;
+      SQLHelper.db();
+    }
+    final data = await SQLHelper.getItems();
     setState(() {
-      _journals = data;
+      if(data != null)
+        {
+          _journals = data;
+        }
       _isLoading = false;
     });
   }
@@ -96,7 +107,6 @@ class _HomePageState extends State<TypesPage> {
                   }
                   // Очистим поле
                   _nameController.text = '';
-                  profitOrNot = 1;
                   // закрываем шторку
                   if (!mounted) return;
                   Navigator.of(context).pop();
@@ -116,7 +126,6 @@ class _HomePageState extends State<TypesPage> {
                   }
                   // Очистим поле
                   _nameController.text = '';
-                  profitOrNot = 0;
                   // закрываем шторку
                   if (!mounted) return;
                   Navigator.of(context).pop();
@@ -138,21 +147,36 @@ class _HomePageState extends State<TypesPage> {
 
 // Вставить новый журнал в базу данных
   Future<void> _addItem() async {
-    await SQLHelperType.createItem(
+    if (SQLHelper.flag == 0)
+      {
+        SQLHelper.flag = 1;
+        SQLHelper.db();
+      }
+    await SQLHelper.createItem(
         _nameController.text, profitOrNot);
     _refreshJournals();
   }
 
   // Обновить существующий журнал
   Future<void> _updateItem(int id) async {
-    await SQLHelperType.updateItem(
+    if (SQLHelper.flag == 0)
+    {
+      SQLHelper.flag = 1;
+      SQLHelper.db();
+    }
+    await SQLHelper.updateItem(
         id, _nameController.text, profitOrNot);
     _refreshJournals();
   }
 
   // Удалить объект
   void _deleteItem(int id) async {
-    await SQLHelperType.deleteItem(id);
+    if (SQLHelper.flag == 0)
+    {
+      SQLHelper.flag = 1;
+      SQLHelper.db();
+    }
+    await SQLHelper.deleteItem(id);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Successfully deleted a journal!'),
     ));

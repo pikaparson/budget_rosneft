@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart' as sql;
+import 'package:budget_rosneft/data_base/transaction_type.dart';
 
 //создание таблицы
 class SQLHelperCategory {
+
   static Future<void> createTables(sql.Database database) async {
     await database.execute("""CREATE TABLE categories(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,

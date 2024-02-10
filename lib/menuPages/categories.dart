@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:budget_rosneft/data_base/transaction_category.dart';
 
+
 class Categories extends StatelessWidget {
   const Categories({Key? key}) : super(key: key);
 
