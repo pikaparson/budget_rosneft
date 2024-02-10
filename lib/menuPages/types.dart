@@ -77,14 +77,37 @@ class _TypesState extends State<Types> {
                         ElevatedButton(
                             onPressed: () {
                               setState(() {
-                                todoList.add(_userToDo);
+                                //todoList.add(_userToDo);
                               });
-                              Navigator.of(context).pop(); //закрывает все вспоывающие окна
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Этот тип увеличивает бюджет?'),
+                                      actions: [
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();//НЕ ВСЕ ОКНА
+                                              },
+                                            child: Text('Да')),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('Нет')),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('Отмена'))
+                                      ],
+                                    );
+                                  });
                             },
-                            child: Text('Добавить')),
+                            child: Text('Продолжить')),
                         ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).pop(); //закрывает все вспоывающие окна
+                              Navigator.of(context).pop(); //закрывает все всплывающие окна
                             },
                             child: Text('Отмена')),
                       ]
