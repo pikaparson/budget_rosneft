@@ -30,11 +30,6 @@ class _HomePageState extends State<TypesPage> {
 
   // Эта функция используется, чтобы выгрузить все данные из БД
   void _refreshJournals() async {
-    if (SQLHelper.flag == 0)
-    {
-      SQLHelper.flag = 1;
-      SQLHelper.db();
-    }
     final data = await SQLHelper.getItems();
     setState(() {
       if(data != null)
@@ -86,6 +81,7 @@ class _HomePageState extends State<TypesPage> {
               // поле для ввода имени
               TextField(
                 controller: _nameController,
+                //keyboardType: TextInputType.text,
                 decoration: const InputDecoration(hintText: 'Названите типа'),
               ),
               // коробка с отступом
@@ -147,11 +143,6 @@ class _HomePageState extends State<TypesPage> {
 
 // Вставить новый журнал в базу данных
   Future<void> _addItem() async {
-    if (SQLHelper.flag == 0)
-      {
-        SQLHelper.flag = 1;
-        SQLHelper.db();
-      }
     await SQLHelper.createItem(
         _nameController.text, profitOrNot);
     _refreshJournals();
@@ -159,11 +150,6 @@ class _HomePageState extends State<TypesPage> {
 
   // Обновить существующий журнал
   Future<void> _updateItem(int id) async {
-    if (SQLHelper.flag == 0)
-    {
-      SQLHelper.flag = 1;
-      SQLHelper.db();
-    }
     await SQLHelper.updateItem(
         id, _nameController.text, profitOrNot);
     _refreshJournals();
@@ -171,11 +157,6 @@ class _HomePageState extends State<TypesPage> {
 
   // Удалить объект
   void _deleteItem(int id) async {
-    if (SQLHelper.flag == 0)
-    {
-      SQLHelper.flag = 1;
-      SQLHelper.db();
-    }
     await SQLHelper.deleteItem(id);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Successfully deleted a journal!'),
