@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:budget_rosneft/data_base/transaction_category.dart';
+//import 'package:budget_rosneft/data_base/transaction_category.dart';
+import 'package:budget_rosneft/DataBase/DB_create.dart';
 
 
 class Categories extends StatelessWidget {
@@ -24,13 +25,16 @@ class TypesPage extends StatefulWidget {
 class _HomePageState extends State<TypesPage> {
   // Все журналы
   List<Map<String, dynamic>> _journals = [];
+  List<Map<String, dynamic>> _journalsTypes = [];
 
   bool _isLoading = true;
   // Эта функция используется, чтобы выгрузить все данные из БД
   void _refreshJournals() async {
-    final data = await SQLHelperCategory.getItems();
+    final data = await SQLHelper.getItemsCategories();
+    final dataTypes = await SQLHelper.getItemNamesType();
     setState(() {
-      _journals = data;
+      _journals = data!;
+      _journalsTypes = dataTypes!;
       _isLoading = false;
     });
   }
@@ -50,11 +54,9 @@ class _HomePageState extends State<TypesPage> {
     if (id != null) {
       // id == null -> create new item
       // id != null -> update an existing item
-      final existingJournal =
-      _journals.firstWhere((element) => element['id'] == id);
+      final existingJournal = _journals.firstWhere((element) => element['id'] == id);
       _nameController.text = existingJournal['name'];
     }
-
     // нижняя шторка для добавления объекта
     showModalBottomSheet(
         context: context,
@@ -83,6 +85,13 @@ class _HomePageState extends State<TypesPage> {
                   height: 20,
                   child: Text('Выберите тип')
               ),
+              DropdownButton(
+                  items: _journalsTypes.map((e) {
+                    return DropdownMenuItem(child: Text(e["Типы транзакций"]), value: e[""],);
+                  }).toList(),
+                  onChanged: (t) {
+                    transactionType = t as int;
+                  }),
               //добавление нового или обновление объекта
               ElevatedButton(
                 onPressed: () async {
@@ -97,7 +106,6 @@ class _HomePageState extends State<TypesPage> {
                   }
                   // Очистим поле
                   _nameController.text = '';
-                  transactionType = 1;
                   // закрываем шторку
                   if (!mounted) return;
                   Navigator.of(context).pop();
@@ -120,21 +128,21 @@ class _HomePageState extends State<TypesPage> {
 
 // Вставить новый журнал в базу данных
   Future<void> _addItem() async {
-    await SQLHelperCategory.createItem(
+    await SQLHelper.createItemCategories(
         _nameController.text, transactionType);
     _refreshJournals();
   }
 
   // Обновить существующий журнал
   Future<void> _updateItem(int id) async {
-    await SQLHelperCategory.updateItem(
+    await SQLHelper.updateItemCategories(
         id, _nameController.text, transactionType);
     _refreshJournals();
   }
 
   // Удалить объект
   void _deleteItem(int id) async {
-    await SQLHelperCategory.deleteItem(id);
+    await SQLHelper.deleteItemCategories(id);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Successfully deleted a journal!'),
     ));
@@ -161,7 +169,7 @@ class _HomePageState extends State<TypesPage> {
           margin: const EdgeInsets.all(15),
           child: ListTile(
               title: Text(_journals[index]['name']),
-              subtitle: Text(_journals[index]['type'] == 0 ? 'Увеличивает бюджет' : 'Уменьшает бюджет'),
+              subtitle: Text(_journals[index]['type'] == 1 ? 'Увеличивает бюджет' : 'Уменьшает бюджет'),
               trailing: SizedBox(
                 width: 100,
                 child: Row(

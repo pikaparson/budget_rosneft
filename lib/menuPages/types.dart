@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'package:budget_rosneft/data_base/transaction_type.dart';
 import 'package:budget_rosneft/DataBase/DB_create.dart';
 
 
@@ -30,7 +29,7 @@ class _HomePageState extends State<TypesPage> {
 
   // Эта функция используется, чтобы выгрузить все данные из БД
   void _refreshJournals() async {
-    final data = await SQLHelper.getItems();
+    final data = await SQLHelper.getItemsType();
     setState(() {
       if(data != null)
         {
@@ -92,6 +91,7 @@ class _HomePageState extends State<TypesPage> {
               //добавление нового или обновление объекта
               ElevatedButton(
                 onPressed: () async {
+                  profitOrNot = 1;
                   // Сохранение нового журнала
                   // Добавление объекта
                   if (id == null) {
@@ -114,6 +114,7 @@ class _HomePageState extends State<TypesPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
+                  profitOrNot = 0;
                   if (id == null) {
                     await _addItem();
                   }
@@ -143,21 +144,21 @@ class _HomePageState extends State<TypesPage> {
 
 // Вставить новый журнал в базу данных
   Future<void> _addItem() async {
-    await SQLHelper.createItem(
+    await SQLHelper.createItemType(
         _nameController.text, profitOrNot);
     _refreshJournals();
   }
 
   // Обновить существующий журнал
   Future<void> _updateItem(int id) async {
-    await SQLHelper.updateItem(
+    await SQLHelper.updateItemType(
         id, _nameController.text, profitOrNot);
     _refreshJournals();
   }
 
   // Удалить объект
   void _deleteItem(int id) async {
-    await SQLHelper.deleteItem(id);
+    await SQLHelper.deleteItemType(id);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Successfully deleted a journal!'),
     ));
@@ -184,7 +185,7 @@ class _HomePageState extends State<TypesPage> {
           margin: const EdgeInsets.all(15),
           child: ListTile(
               title: Text(_journals[index]['name']),
-              subtitle: Text(_journals[index]['profit'] == 0 ? 'Увеличивает бюджет' : 'Уменьшает бюджет'),
+              subtitle: Text(_journals[index]['profit'] == 1 ? 'Увеличивает бюджет' : 'Уменьшает бюджет'),
               trailing: SizedBox(
                 width: 100,
                 child: Row(

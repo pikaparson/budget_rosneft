@@ -67,35 +67,28 @@ class SQLHelper  {
   //ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ
 
 // Создание нового объекта (журнал)
-  static Future<int?> createItem(String name, int profit) async {
+  static Future<int?> createItemType(String name, int profit) async {
  //   await SQLHelper.db;
     await DB();
     final data = {'name': name, 'profit': profit};
-    final id = await _database?.insert('types', data, conflictAlgorithm: sql.ConflictAlgorithm.replace);
-    return id;
+    return await _database?.insert('types', data, conflictAlgorithm: sql.ConflictAlgorithm.replace);;
   }
 
   // Прочитать все элементы (журнал)
-  static Future<List<Map<String, dynamic>>?> getItems() async {
- //   await SQLHelper.db;
+  static Future<List<Map<String, dynamic>>?> getItemsType() async {
     await DB();
- //   await _database?.database;
     return _database?.query('types', orderBy: "id");
   }
 
   // Прочитать элемент по id
   // Не используется, на всякий случай здесь
-  static Future<List<Map<String, dynamic>>?> getItem(int id) async {
- //   await SQLHelper.db;
- //   await _database?.database;
+  static Future<List<Map<String, dynamic>>?> getItemType(int id) async {
     await DB();
     return _database?.query('types', where: "id = ?", whereArgs: [id], limit: 1);
   }
 
   // Обновление объекта по id
-  static Future<int?> updateItem(int id, String name, int profit) async {
-  //  await SQLHelper.db;
-  //  await _database?.database;
+  static Future<int?> updateItemType(int id, String name, int profit) async {
     await DB();
     final data = {
       'name': name,
@@ -106,9 +99,7 @@ class SQLHelper  {
   }
 
   // Удалить по id
-  static Future<void> deleteItem(int id) async {
-  //  await SQLHelper.db;
- //   await _database?.database;
+  static Future<void> deleteItemType(int id) async {
     await DB();
     try {
       await _database?.delete("types", where: "id = ?", whereArgs: [id]);
@@ -117,4 +108,53 @@ class SQLHelper  {
     }
   }
 
+  static Future<List<Map<String, dynamic>>?> getItemNamesType() async {
+    await DB();
+    //return _database?.query('types', orderBy: "id");
+    return _database?.rawQuery('SELECT name FROM types');
+  }
+
+
+  // КАТЕГОРИИ ----- КАТЕГОРИИ ----- КАТЕГОРИИ ----- КАТЕГОРИИ ----- КАТЕГОРИИ ----- КАТЕГОРИИ ----- КАТЕГОРИИ
+
+  // Создание нового объекта (журнал)
+  static Future<int?> createItemCategories(String name, int type) async {
+    await DB();
+    final data = {'name': name, 'type': type};
+    return await _database?.insert('categories', data, conflictAlgorithm: sql.ConflictAlgorithm.replace);;
+  }
+
+  // Прочитать все элементы (журнал)
+  static Future<List<Map<String, dynamic>>?> getItemsCategories() async {
+    await DB();
+    return await _database?.query('categories', orderBy: "id");;
+  }
+
+  // Прочитать элемент по id
+  // Не используется, на всякий случай здесь
+  static Future<Future<List<Map<String, Object?>>>?> getItemCategories(int id) async {
+    await DB();
+    return _database?.query('categories', where: "id = ?", whereArgs: [id], limit: 1);;
+  }
+
+  // Обновление объекта по id
+  static Future<int?> updateItemCategories(int id, String name, int type) async {
+    await DB();
+    final data = {
+      'name': name,
+      'type': type,
+      'createdAt': DateTime.now().toString()
+    };
+    return await _database?.update('categories', data, where: "id = ?", whereArgs: [id]);;
+  }
+
+  // Удалить по id
+  static Future<void> deleteItemCategories(int id) async {
+    await DB();
+    try {
+      await _database?.delete("categories", where: "id = ?", whereArgs: [id]);
+    } catch (err) {
+      debugPrint("Something went wrong when deleting an item: $err");
+    }
+  }
 }
