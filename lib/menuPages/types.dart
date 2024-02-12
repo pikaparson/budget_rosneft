@@ -29,7 +29,7 @@ class _HomePageState extends State<TypesPage> {
 
   // Эта функция используется, чтобы выгрузить все данные из БД
   void _refreshJournals() async {
-    final data = await SQLHelper.getItemsType();
+    final data = await SQLHelper().getItemsType();
     setState(() {
       if(data != null)
         {
@@ -144,21 +144,21 @@ class _HomePageState extends State<TypesPage> {
 
 // Вставить новый журнал в базу данных
   Future<void> _addItem() async {
-    await SQLHelper.createItemType(
+    await SQLHelper().createItemType(
         _nameController.text, profitOrNot);
     _refreshJournals();
   }
 
   // Обновить существующий журнал
   Future<void> _updateItem(int id) async {
-    await SQLHelper.updateItemType(
+    await SQLHelper().updateItemType(
         id, _nameController.text, profitOrNot);
     _refreshJournals();
   }
 
   // Удалить объект
   void _deleteItem(int id) async {
-    await SQLHelper.deleteItemType(id);
+    await SQLHelper().deleteItemType(id);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Successfully deleted a journal!'),
     ));

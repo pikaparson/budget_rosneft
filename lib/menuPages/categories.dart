@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 //import 'package:budget_rosneft/data_base/transaction_category.dart';
 import 'package:budget_rosneft/DataBase/DB_create.dart';
@@ -30,8 +32,9 @@ class _HomePageState extends State<TypesPage> {
   bool _isLoading = true;
   // Эта функция используется, чтобы выгрузить все данные из БД
   void _refreshJournals() async {
-    final data = await SQLHelper.getItemsCategories();
-    final dataTypes = await SQLHelper.getItemNamesType();
+    final data = await SQLHelper().getItemsCategories();
+    final dataTypes = await SQLHelper().getItemNamesType();
+    log(dataTypes.toString());
     setState(() {
       _journals = data!;
       _journalsTypes = dataTypes!;
@@ -58,6 +61,7 @@ class _HomePageState extends State<TypesPage> {
       _nameController.text = existingJournal['name'];
     }
     // нижняя шторка для добавления объекта
+    log(_journalsTypes.toString(), name: 'Show');
     showModalBottomSheet(
         context: context,
         elevation: 5,
@@ -87,10 +91,10 @@ class _HomePageState extends State<TypesPage> {
               ),
               DropdownButton(
                   items: _journalsTypes.map((e) {
-                    return DropdownMenuItem(child: Text(e["Типы транзакций"]), value: e[""],);
+                    return DropdownMenuItem<int>(child: Text(e["name"]), value: e["id"],);
                   }).toList(),
                   onChanged: (t) {
-                    transactionType = t as int;
+                    transactionType = t!;
                   }),
               //добавление нового или обновление объекта
               ElevatedButton(
@@ -128,21 +132,21 @@ class _HomePageState extends State<TypesPage> {
 
 // Вставить новый журнал в базу данных
   Future<void> _addItem() async {
-    await SQLHelper.createItemCategories(
+    await SQLHelper().createItemCategories(
         _nameController.text, transactionType);
     _refreshJournals();
   }
 
   // Обновить существующий журнал
   Future<void> _updateItem(int id) async {
-    await SQLHelper.updateItemCategories(
+    await SQLHelper().updateItemCategories(
         id, _nameController.text, transactionType);
     _refreshJournals();
   }
 
   // Удалить объект
   void _deleteItem(int id) async {
-    await SQLHelper.deleteItemCategories(id);
+    await SQLHelper().deleteItemCategories(id);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Successfully deleted a journal!'),
     ));
