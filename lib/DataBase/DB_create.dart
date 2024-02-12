@@ -44,24 +44,14 @@ class SQLHelper  {
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
       """);
-    });
-  }
-
-  static FutureOr<void> createTables() async {
-    await _database?.execute("""CREATE TABLE types(
+      await database.execute("""CREATE TABLE transactions(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         name TEXT,
-        profit INTEGER,
-        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-      )
-      """);
-    await _database?.execute("""CREATE TABLE categories(
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        name TEXT,
-        type INTEGER REFERENCES types (id),
+        category INTEGER REFERENCES types (id),
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
       """);
+    });
   }
 
   //ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ ----- ТИПЫ
@@ -116,7 +106,6 @@ class SQLHelper  {
     return db?.rawQuery('SELECT name, id FROM types');
   }
 
-
   // КАТЕГОРИИ ----- КАТЕГОРИИ ----- КАТЕГОРИИ ----- КАТЕГОРИИ ----- КАТЕГОРИИ ----- КАТЕГОРИИ ----- КАТЕГОРИИ
 
   // Создание нового объекта (журнал)
@@ -136,7 +125,7 @@ class SQLHelper  {
   // Не используется, на всякий случай здесь
   Future<Future<List<Map<String, Object?>>>?> getItemCategories(int id) async {
     final sql.Database? db = await database;
-    return db?.query('categories', where: "id = ?", whereArgs: [id], limit: 1);;
+    return db?.query('categories', where: "id = ?", whereArgs: [id], limit: 1);
   }
 
   // Обновление объекта по id
@@ -159,4 +148,69 @@ class SQLHelper  {
       debugPrint("Something went wrong when deleting an item: $err");
     }
   }
+
+  Future<List<Map<String, dynamic>>?> getItemNamesCategory() async {
+    final sql.Database? db = await database;
+    //return _database?.query('types', orderBy: "id");
+    return db?.rawQuery('SELECT name, id FROM types');
+  }
+
+  Future<String> getTypeOfCategory(int id) async {
+    final sql.Database? db = await database;
+    var helperType = await db?.rawQuery('SELECT name FROM types WHERE id = ?', [id]);
+    final String helper = await helperType.toString();
+    return helper;
+  }
+
+
+// ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ
+
+// Создание нового объекта (журнал)
+  Future<int?> createItemTransaction(String name, int category) async {
+    final sql.Database? db = await database;
+    final data = {'name': category, 'type': category};
+    return await db?.insert('transactions', data, conflictAlgorithm: sql.ConflictAlgorithm.replace);;
+  }
+
+  // Прочитать все элементы (журнал)
+  Future<List<Map<String, dynamic>>?> getItemsTransaction() async {
+    final sql.Database? db = await database;
+    return await db?.query('transactions', orderBy: "id");;
+  }
+
+  // Прочитать элемент по id
+  // Не используется, на всякий случай здесь
+  Future<Future<List<Map<String, Object?>>>?> getItemTransaction(int id) async {
+    final sql.Database? db = await database;
+    return db?.query('transactions', where: "id = ?", whereArgs: [id], limit: 1);
+  }
+
+  // Обновление объекта по id
+  Future<int?> updateItemTransaction(int id, String name, int category) async {
+    final sql.Database? db = await database;
+    final data = {
+      'name': name,
+      'category': category,
+      'createdAt': DateTime.now().toString()
+    };
+    return await db?.update('transactions', data, where: "id = ?", whereArgs: [id]);;
+  }
+
+  // Удалить по id
+  Future<void> deleteItemTransaction(int id) async {
+    final sql.Database? db = await database;
+    try {
+      await db?.delete("transactions", where: "id = ?", whereArgs: [id]);
+    } catch (err) {
+      debugPrint("Something went wrong when deleting an item: $err");
+    }
+  }
+
+  Future<String> getCategoryOfTransaction(int id) async {
+    final sql.Database? db = await database;
+    var helperType = await db?.rawQuery('SELECT name FROM categories WHERE id = ?', [id]);
+    final String helper = await helperType.toString();
+    return helper;
+  }
+
 }

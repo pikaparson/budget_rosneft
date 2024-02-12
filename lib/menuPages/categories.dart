@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 //import 'package:budget_rosneft/data_base/transaction_category.dart';
 import 'package:budget_rosneft/DataBase/DB_create.dart';
 
+//ВМЕСТО ТИПА ПИШЕТ ФИГНЮ
 
 class Categories extends StatelessWidget {
   const Categories({Key? key}) : super(key: key);
@@ -13,18 +14,18 @@ class Categories extends StatelessWidget {
     return MaterialApp(
       // убирает баннер debug
         debugShowCheckedModeBanner: false,
-        home: const TypesPage());
+        home: const CategoriesPage());
   }
 }
 
-class TypesPage extends StatefulWidget {
-  const TypesPage({Key? key}) : super(key: key);
+class CategoriesPage extends StatefulWidget {
+  const CategoriesPage({Key? key}) : super(key: key);
 
   @override
-  State<TypesPage> createState() => _HomePageState();
+  State<CategoriesPage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<TypesPage> {
+class _HomePageState extends State<CategoriesPage> {
   // Все журналы
   List<Map<String, dynamic>> _journals = [];
   List<Map<String, dynamic>> _journalsTypes = [];
@@ -34,7 +35,6 @@ class _HomePageState extends State<TypesPage> {
   void _refreshJournals() async {
     final data = await SQLHelper().getItemsCategories();
     final dataTypes = await SQLHelper().getItemNamesType();
-    log(dataTypes.toString());
     setState(() {
       _journals = data!;
       _journalsTypes = dataTypes!;
@@ -61,7 +61,6 @@ class _HomePageState extends State<TypesPage> {
       _nameController.text = existingJournal['name'];
     }
     // нижняя шторка для добавления объекта
-    log(_journalsTypes.toString(), name: 'Show');
     showModalBottomSheet(
         context: context,
         elevation: 5,
@@ -82,7 +81,7 @@ class _HomePageState extends State<TypesPage> {
               // поле для ввода имени
               TextField(
                 controller: _nameController,
-                decoration: const InputDecoration(hintText: 'Названите категории'),
+                decoration: const InputDecoration(hintText: 'Название категории'),
               ),
               // коробка с отступом
               const SizedBox(
@@ -173,7 +172,7 @@ class _HomePageState extends State<TypesPage> {
           margin: const EdgeInsets.all(15),
           child: ListTile(
               title: Text(_journals[index]['name']),
-              subtitle: Text(_journals[index]['type'] == 1 ? 'Увеличивает бюджет' : 'Уменьшает бюджет'),
+              subtitle: Text('${SQLHelper().getTypeOfCategory(_journals[index]['id'])}'),
               trailing: SizedBox(
                 width: 100,
                 child: Row(
