@@ -36,9 +36,9 @@ class Menu extends StatelessWidget {
 
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(context, '/statistics', (route) => true);
+              //  Navigator.pushNamedAndRemoveUntil(context, '/statistics', (route) => true);
               },
-              child: Text('Статистика', style: TextStyle(fontSize: 12, color: Colors.blueGrey[800])),
+              child: Text('Вывести статистику в pdf', style: TextStyle(fontSize: 12, color: Colors.blueGrey[800])),
             ),
 
             // SizedBox(height: 10),

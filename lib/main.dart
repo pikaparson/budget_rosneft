@@ -4,7 +4,7 @@ import 'package:budget_rosneft/pages/main_screen.dart';
 
 import 'package:budget_rosneft/menuPages/types.dart';
 import 'package:budget_rosneft/menuPages/categories.dart';
-import 'package:budget_rosneft/menuPages/statistics.dart';
+import 'package:budget_rosneft/pages/transactions.dart';
 
 void main() async {
   runApp(MaterialApp(

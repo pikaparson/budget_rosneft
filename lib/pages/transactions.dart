@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:budget_rosneft/DataBase/DB_create.dart';
-import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import  'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/services.dart';
 
 class Statistics extends StatelessWidget {
@@ -39,6 +39,7 @@ class _HomePageState extends State<StatisticsPage> {
       _journalsCategory = dataCategory!;
       _isLoading = false;
     });
+    log('$_journals');
   }
 
   @override
@@ -50,7 +51,7 @@ class _HomePageState extends State<StatisticsPage> {
   int transactionCategory = 1;
   double count = 0;
   final TextEditingController _nameController = TextEditingController();
-  final CurrencyTextInputFormatter _moneyController = CurrencyTextInputFormatter();
+  final TextEditingController _moneyController = TextEditingController();
  // final TextEditingController _moneyController = TextEditingController();
   // Эта функция будет активирована при нажатии floatingActionB
   // Она также будет активирована, когда обновляем элемент
@@ -60,6 +61,7 @@ class _HomePageState extends State<StatisticsPage> {
       // id != null -> update an existing item
       final existingJournal = _journals.firstWhere((element) => element['id'] == id);
       _nameController.text = existingJournal['name'];
+      _moneyController.text = existingJournal['count'];
     }
     // нижняя шторка для добавления объекта
     showModalBottomSheet(
@@ -86,18 +88,23 @@ class _HomePageState extends State<StatisticsPage> {
               ),
               // коробка с отступом
               const SizedBox(
-                  height: 20,
-                  child: Text('Введите количество суммы')
+                  height: 15,
               ),
               // С ДЕНЬГАМИ ПОРАБОТАТЬ
-              TextFormField(
-                initialValue: _moneyController.format('000'),
-                inputFormatters: <TextInputFormatter>[_moneyController],
-                keyboardType: TextInputType.number,
+              TextField(
+                controller: _moneyController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
+                  ],
+                decoration: const InputDecoration(hintText: 'Сумма'),
               ),
               const SizedBox(
-                  height: 20,
-                  child: Text('Выберите категорию')
+                  height: 25,
+              ),
+              const SizedBox(
+                height: 15,
+                child: Text('Выберите категорию'),
               ),
               DropdownButton(
                   items: _journalsCategory.map((e) {
@@ -120,7 +127,8 @@ class _HomePageState extends State<StatisticsPage> {
                   }
                   // Очистим поле
                   _nameController.text = '';
-                  count = double.parse('$_moneyController');
+                  _moneyController.text = '';
+                  transactionCategory = 1;
                   // закрываем шторку
                   if (!mounted) return;
                   Navigator.of(context).pop();
@@ -143,12 +151,14 @@ class _HomePageState extends State<StatisticsPage> {
 
 // Вставить новый журнал в базу данных
   Future<void> _addItem() async {
+    count = double.parse('${_moneyController.text}');
     await SQLHelper().createItemTransaction(_nameController.text, transactionCategory, count);
     _refreshJournals();
   }
 
   // Обновить существующий журнал
   Future<void> _updateItem(int id) async {
+    count = double.parse('${_moneyController.text}');
     await SQLHelper().updateItemTransaction(id, _nameController.text, transactionCategory, count);
     _refreshJournals();
   }

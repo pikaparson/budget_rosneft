@@ -1,3 +1,4 @@
+import 'package:budget_rosneft/pages/transactions.dart';
 import 'package:flutter/material.dart';
 import 'package:budget_rosneft/pages/menu.dart';
 import 'package:budget_rosneft/pages/exchangerate.dart';
@@ -22,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
  // ];
 
   final List<Widget> _pages = [
-    Budget(),
+    Statistics(),
     ExchangeRate(),
     Menu(),
   ];
