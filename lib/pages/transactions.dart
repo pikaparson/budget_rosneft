@@ -191,7 +191,7 @@ class _HomePageState extends State<StatisticsPage> {
           color: Colors.white,
           margin: const EdgeInsets.all(15),
           child: ListTile(
-              title: Text('${_journals[index]['name']} \n ${_journals[index]['count']}'),
+              title: Text('${_journals[index]['name']}\n${_journals[index]['count']}'),
               subtitle: FutureBuilder<String>(
                 future: SQLHelper().getCategoryOfTransaction(_journals[index]['id']),
                 builder: (context, snapshot) {

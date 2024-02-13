@@ -38,6 +38,8 @@ dependencies:
   sqflite: ^2.3.2
   path: ^1.8.3
   currency_text_input_formatter: ^2.1.13
+  pdf: ^3.10.7
+  printing: ^5.4.2
 
 dev_dependencies:
   flutter_test:
@@ -55,11 +57,14 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: russia
+      fonts:
+        - asset: assets/russia.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
