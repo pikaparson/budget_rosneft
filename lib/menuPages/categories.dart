@@ -172,7 +172,13 @@ class _HomePageState extends State<CategoriesPage> {
           margin: const EdgeInsets.all(15),
           child: ListTile(
               title: Text(_journals[index]['name']),
-              subtitle: Text('${SQLHelper().getTypeOfCategory(_journals[index]['id'])}'),
+              //в интернете предлагают setState, но как в билде его использовать, если так вообще можно?
+              subtitle: FutureBuilder<String>(
+                future: SQLHelper().getTypeOfCategory(_journals[index]['id']),
+                builder: (context, snapshot) {
+                  return Text('${snapshot.data}');
+                }
+              ),
               trailing: SizedBox(
                 width: 100,
                 child: Row(

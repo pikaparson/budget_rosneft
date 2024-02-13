@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 
@@ -152,7 +151,7 @@ class SQLHelper  {
   Future<List<Map<String, dynamic>>?> getItemNamesCategory() async {
     final sql.Database? db = await database;
     //return _database?.query('types', orderBy: "id");
-    return db?.rawQuery('SELECT name, id FROM types');
+    return db?.rawQuery('SELECT name, id FROM categories');
   }
 
   Future<String> getTypeOfCategory(int id) async {
@@ -168,7 +167,7 @@ class SQLHelper  {
 // Создание нового объекта (журнал)
   Future<int?> createItemTransaction(String name, int category) async {
     final sql.Database? db = await database;
-    final data = {'name': category, 'type': category};
+    final data = {'name': name, 'category': category};
     return await db?.insert('transactions', data, conflictAlgorithm: sql.ConflictAlgorithm.replace);;
   }
 

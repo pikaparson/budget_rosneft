@@ -92,8 +92,8 @@ class _HomePageState extends State<StatisticsPage> {
                   items: _journalsCategory.map((e) {
                     return DropdownMenuItem<int>(child: Text(e["name"]), value: e["id"],);
                   }).toList(),
-                  onChanged: (t) {
-                    transactionCategory = t!;
+                  onChanged: (c) {
+                    transactionCategory = c!;
                   }),
               //добавление нового или обновление объекта
               ElevatedButton(
@@ -131,21 +131,21 @@ class _HomePageState extends State<StatisticsPage> {
 
 // Вставить новый журнал в базу данных
   Future<void> _addItem() async {
-    await SQLHelper().createItemCategories(
+    await SQLHelper().createItemTransaction(
         _nameController.text, transactionCategory);
     _refreshJournals();
   }
 
   // Обновить существующий журнал
   Future<void> _updateItem(int id) async {
-    await SQLHelper().updateItemCategories(
+    await SQLHelper().updateItemTransaction(
         id, _nameController.text, transactionCategory);
     _refreshJournals();
   }
 
   // Удалить объект
   void _deleteItem(int id) async {
-    await SQLHelper().deleteItemCategories(id);
+    await SQLHelper().deleteItemTransaction(id);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Successfully deleted a journal!'),
     ));
