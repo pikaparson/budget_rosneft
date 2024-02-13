@@ -31,22 +31,23 @@ class SQLHelper  {
     return await sql.openDatabase(path, version: 1, onCreate: (sql.Database database, int version) async {
       await database.execute("""CREATE TABLE types(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        name TEXT,
-        profit INTEGER,
+        name TEXT NOT NULL,
+        profit INTEGER NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       )
       """);
       await database.execute("""CREATE TABLE categories(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        name TEXT,
-        type INTEGER REFERENCES types (id),
+        name TEXT NOT NULL,
+        type INTEGER REFERENCES types (id) NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
       """);
       await database.execute("""CREATE TABLE transactions(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        name TEXT,
-        category INTEGER REFERENCES types (id),
+        name TEXT NOT NULL,
+        count REAL NOT NULL,
+        category INTEGER REFERENCES types (id) NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
       """);
@@ -156,25 +157,27 @@ class SQLHelper  {
 
   Future<String> getTypeOfCategory(int id) async {
     final sql.Database? db = await database;
-    var helperType = await db?.rawQuery('SELECT name FROM types WHERE id = ?', [id]);
-    final String helper = await helperType.toString();
-    return helper;
+    final helperType = await db?.rawQuery('SELECT name FROM types WHERE id = ?', [id]);
+    if (helperType != null) {
+      return helperType[0]['name'].toString();
+    }
+    return Future.value('');
   }
 
 
 // ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ ----- ТРАНЗАКЦИИ
 
 // Создание нового объекта (журнал)
-  Future<int?> createItemTransaction(String name, int category) async {
+  Future<int?> createItemTransaction(String name, int category, double count) async {
     final sql.Database? db = await database;
-    final data = {'name': name, 'category': category};
+    final data = {'name': name, 'category': category, 'count': count};
     return await db?.insert('transactions', data, conflictAlgorithm: sql.ConflictAlgorithm.replace);;
   }
 
   // Прочитать все элементы (журнал)
   Future<List<Map<String, dynamic>>?> getItemsTransaction() async {
     final sql.Database? db = await database;
-    return await db?.query('transactions', orderBy: "id");;
+    return await db?.query('transactions', orderBy: "id");
   }
 
   // Прочитать элемент по id
@@ -185,11 +188,12 @@ class SQLHelper  {
   }
 
   // Обновление объекта по id
-  Future<int?> updateItemTransaction(int id, String name, int category) async {
+  Future<int?> updateItemTransaction(int id, String name, int category, double count) async {
     final sql.Database? db = await database;
     final data = {
       'name': name,
       'category': category,
+      'count': count,
       'createdAt': DateTime.now().toString()
     };
     return await db?.update('transactions', data, where: "id = ?", whereArgs: [id]);;
@@ -207,9 +211,11 @@ class SQLHelper  {
 
   Future<String> getCategoryOfTransaction(int id) async {
     final sql.Database? db = await database;
-    var helperType = await db?.rawQuery('SELECT name FROM categories WHERE id = ?', [id]);
-    final String helper = await helperType.toString();
-    return helper;
+    final helperType = await db?.rawQuery('SELECT name FROM categories WHERE id = ?', [id]);
+    if (helperType != null) {
+      return helperType[0]['name'].toString();
+    }
+    return Future.value('');
   }
 
 }

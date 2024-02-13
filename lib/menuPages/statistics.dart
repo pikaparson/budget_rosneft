@@ -2,9 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:budget_rosneft/DataBase/DB_create.dart';
-
-
-//НЕ ДОБАВЛЯЕТ, НЕ ВЫДАЕТ ОШИБКУ
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:flutter/services.dart';
 
 class Statistics extends StatelessWidget {
   const Statistics({Key? key}) : super(key: key);
@@ -49,8 +48,10 @@ class _HomePageState extends State<StatisticsPage> {
   }
 
   int transactionCategory = 1;
+  double count = 0;
   final TextEditingController _nameController = TextEditingController();
-
+  final CurrencyTextInputFormatter _moneyController = CurrencyTextInputFormatter();
+ // final TextEditingController _moneyController = TextEditingController();
   // Эта функция будет активирована при нажатии floatingActionB
   // Она также будет активирована, когда обновляем элемент
   void _showForm(int? id) async {
@@ -86,6 +87,16 @@ class _HomePageState extends State<StatisticsPage> {
               // коробка с отступом
               const SizedBox(
                   height: 20,
+                  child: Text('Введите количество суммы')
+              ),
+              // С ДЕНЬГАМИ ПОРАБОТАТЬ
+              TextFormField(
+                initialValue: _moneyController.format('000'),
+                inputFormatters: <TextInputFormatter>[_moneyController],
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(
+                  height: 20,
                   child: Text('Выберите категорию')
               ),
               DropdownButton(
@@ -109,6 +120,7 @@ class _HomePageState extends State<StatisticsPage> {
                   }
                   // Очистим поле
                   _nameController.text = '';
+                  count = double.parse('$_moneyController');
                   // закрываем шторку
                   if (!mounted) return;
                   Navigator.of(context).pop();
@@ -131,15 +143,13 @@ class _HomePageState extends State<StatisticsPage> {
 
 // Вставить новый журнал в базу данных
   Future<void> _addItem() async {
-    await SQLHelper().createItemTransaction(
-        _nameController.text, transactionCategory);
+    await SQLHelper().createItemTransaction(_nameController.text, transactionCategory, count);
     _refreshJournals();
   }
 
   // Обновить существующий журнал
   Future<void> _updateItem(int id) async {
-    await SQLHelper().updateItemTransaction(
-        id, _nameController.text, transactionCategory);
+    await SQLHelper().updateItemTransaction(id, _nameController.text, transactionCategory, count);
     _refreshJournals();
   }
 
@@ -171,8 +181,13 @@ class _HomePageState extends State<StatisticsPage> {
           color: Colors.white,
           margin: const EdgeInsets.all(15),
           child: ListTile(
-              title: Text(_journals[index]['name']),
-              subtitle: Text('${SQLHelper().getCategoryOfTransaction(_journals[index]['id'])}'),
+              title: Text('${_journals[index]['name']} \n ${_journals[index]['count']}'),
+              subtitle: FutureBuilder<String>(
+                future: SQLHelper().getCategoryOfTransaction(_journals[index]['id']),
+                builder: (context, snapshot) {
+                  return Text('${snapshot.data}');}
+              ),
+              //Text('${SQLHelper().getCategoryOfTransaction(_journals[index]['id'])}'),
               trailing: SizedBox(
                 width: 100,
                 child: Row(
