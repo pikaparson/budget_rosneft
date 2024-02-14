@@ -40,6 +40,8 @@ dependencies:
   currency_text_input_formatter: ^2.1.13
   pdf: ^3.10.7
   printing: ^5.4.2
+  http: ^1.2.0
+  dio: ^5.4.0
 
 dev_dependencies:
   flutter_test:

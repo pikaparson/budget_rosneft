@@ -33,10 +33,11 @@ class MyStatefulWidget extends StatefulWidget {
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   //КАК ПЕРЕДАТЬ ТЕКСТ, ЧТОБЫ БЫЛО ПО СТОЛБАМ? НУЖЕН ПОДЗАПРОС ДЛЯ ВЫВОДА НАЗВАНИЯ ТИПА
-  String textDB = '${SQLHelper().getItemsTransaction()}';
+
 
   Future<Uint8List> generatePdf() async {
 
+    String textDB = '${await SQLHelper().getItemsTransaction()}';
     final font = await rootBundle.load("assets/russia.ttf");
     final ttf = pw.Font.ttf(font);
 

@@ -31,7 +31,7 @@ class _HomePageState extends State<StatisticsPage> {
 
   bool _isLoading = true;
   // Эта функция используется, чтобы выгрузить все данные из БД
-  void _refreshJournals() async {
+  Future<void> _refreshJournals() async {
     final data = await SQLHelper().getItemsTransaction();
     final dataCategory = await SQLHelper().getItemNamesCategory();
     setState(() {
@@ -39,7 +39,6 @@ class _HomePageState extends State<StatisticsPage> {
       _journalsCategory = dataCategory!;
       _isLoading = false;
     });
-    log('$_journals');
   }
 
   @override
@@ -129,6 +128,7 @@ class _HomePageState extends State<StatisticsPage> {
                   _nameController.text = '';
                   _moneyController.text = '';
                   transactionCategory = 1;
+                  await _refreshJournals();
                   // закрываем шторку
                   if (!mounted) return;
                   Navigator.of(context).pop();
@@ -193,8 +193,7 @@ class _HomePageState extends State<StatisticsPage> {
           child: ListTile(
               title: Text('${_journals[index]['name']}\n${_journals[index]['count']}'),
               subtitle: FutureBuilder<String>(
-                // ПОЧЕМУ-ТО ВЫВОДИТ КАТЕГОРИЮ 1 РАЗ :(
-                future: SQLHelper().getCategoryOfTransaction(_journals[index]['id']),
+                future: SQLHelper().getCategoryOfTransaction(_journals[index]['category']),
                 builder: (context, snapshot) {
                   return Text('${snapshot.data}');}
               ),

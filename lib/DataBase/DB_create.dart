@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -205,7 +206,9 @@ class SQLHelper  {
 
   Future<String> getCategoryOfTransaction(int id) async {
     final sql.Database? db = await database;
+    log(id.toString(), name: 'ID',);
     final helperType = await db?.rawQuery('SELECT name FROM categories WHERE id = ?', [id]);
+    log(helperType.toString(), name: 'Inside Method DB',);
     if (helperType != null) {
       return helperType[0]['name'].toString();
     }

@@ -1,4 +1,5 @@
 import 'package:budget_rosneft/DataBase/returnPDF.dart';
+import 'package:budget_rosneft/pages/exchangerate.dart';
 import 'package:flutter/material.dart';
 
 import 'package:budget_rosneft/pages/main_screen.dart';
@@ -22,7 +23,7 @@ void main() async {
       '/categories': (context) => Categories(),
       '/statistics' : (context) => Statistics(),
       '/returnPDF' : (context) => returnPDF(),
-      //'/exchangerate': (context) => ExchangeRate(),
+      '/exchangerate': (context) => ExchangeRate(),
 
     },
   ));

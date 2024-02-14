@@ -174,7 +174,7 @@ class _HomePageState extends State<CategoriesPage> {
               title: Text(_journals[index]['name']),
               //в интернете предлагают setState, но как в билде его использовать, если так вообще можно?
               subtitle: FutureBuilder<String>(
-                future: SQLHelper().getTypeOfCategory(_journals[index]['id']),
+                future: SQLHelper().getTypeOfCategory(_journals[index]['type']),
                 builder: (context, snapshot) {
                   return Text('${snapshot.data}');
                 }

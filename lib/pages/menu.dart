@@ -43,13 +43,6 @@ class Menu extends StatelessWidget {
             ),
 
             // SizedBox(height: 10),
-
-            ElevatedButton(
-              onPressed: () {
-                //  Navigator.pushNamed(context, '/types');
-              },
-              child: Text('Об авторе', style: TextStyle(fontSize: 12, color: Colors.blueGrey[800])),
-            ),
           ],
         ),
       )
