@@ -19,12 +19,6 @@ class SQLHelper  {
      return _database;
    }
 
- //   static Future<void> DB() async {
- //     if (_database == null) {
- //       _database = await db();
- //     }
- // }
-
   FutureOr<sql.Database> db() async {
     final Directory dir = await getApplicationDocumentsDirectory();
     final String path = '${dir.path}/mobile.sqlite';

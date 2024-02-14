@@ -193,6 +193,7 @@ class _HomePageState extends State<StatisticsPage> {
           child: ListTile(
               title: Text('${_journals[index]['name']}\n${_journals[index]['count']}'),
               subtitle: FutureBuilder<String>(
+                // ПОЧЕМУ-ТО ВЫВОДИТ КАТЕГОРИЮ 1 РАЗ :(
                 future: SQLHelper().getCategoryOfTransaction(_journals[index]['id']),
                 builder: (context, snapshot) {
                   return Text('${snapshot.data}');}
