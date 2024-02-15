@@ -6,38 +6,18 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
-
 import 'package:budget_rosneft/DataBase/DB_create.dart';
 
-class returnPDF extends StatelessWidget {
+class returnPDF extends StatefulWidget {
   const returnPDF({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Создать PDF',
-        theme: ThemeData(
-          useMaterial3: true,
-        ),
-        home: const MyStatefulWidget());
-  }
+  State<returnPDF> createState() => _returnPDFState();
 }
 
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({super.key});
-
-  @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
-}
-
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-
-  //КАК ПЕРЕДАТЬ ТЕКСТ, ЧТОБЫ БЫЛО ПО СТОЛБАМ? НУЖЕН ПОДЗАПРОС ДЛЯ ВЫВОДА НАЗВАНИЯ ТИПА
-
-
+class _returnPDFState extends State<returnPDF> {
   Future<Uint8List> generatePdf() async {
-
-    String textDB = '${await SQLHelper().getItemsTransaction()}';
+    String textDB = '${await SQLHelper().getStringForPDF()}';
     final font = await rootBundle.load("assets/russia.ttf");
     final ttf = pw.Font.ttf(font);
 
@@ -45,11 +25,14 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Text(
-              textDB,
-              style: pw.TextStyle(fontSize: 16,font: ttf),
-            ),
+          return pw.Row(
+            children: [
+              pw.Column(
+                children: [
+                  pw.Text(textDB, style: pw.TextStyle(fontSize: 12,font: ttf),),
+                ]
+              )
+            ]
           ); // Center
         }));
 
@@ -64,6 +47,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Создать PDF'),
+        backgroundColor: Colors.blueGrey[700],
       ),
       body: PdfPreview(
         build: (context) => generatePdf(),

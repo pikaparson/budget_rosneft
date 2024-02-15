@@ -206,13 +206,40 @@ class SQLHelper  {
 
   Future<String> getCategoryOfTransaction(int id) async {
     final sql.Database? db = await database;
-    log(id.toString(), name: 'ID',);
     final helperType = await db?.rawQuery('SELECT name FROM categories WHERE id = ?', [id]);
-    log(helperType.toString(), name: 'Inside Method DB',);
     if (helperType != null) {
       return helperType[0]['name'].toString();
     }
     return Future.value('');
+  }
+
+  Future<String> getNameCategoryFromId(int id) async {
+    final sql.Database? db = await database;
+    final helper = await db?.rawQuery('SELECT name FROM categories WHERE id = ?', [id]);
+    if (helper != null) {
+      return helper[0]['name'].toString();
+    }
+    return Future.value('');
+  }
+
+  // PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF ----- PDF
+
+  Future<String> getStringForPDF() async {
+    final sql.Database? db = await database;
+    String assHelper = '${await db?.rawQuery('SELECT name, count, createdAt FROM transactions')}';
+    late String ass = ' ';
+    for( int i = 0; i < assHelper.length; i++){
+      if (assHelper[i] == '}') {
+        ass += '\n';
+      }
+      else if (assHelper[i] == '{' || assHelper[i] == ',' || assHelper[i] == '[' || assHelper[i] == ']') {
+        continue;
+      }
+      else {
+        ass = ass + assHelper[i];
+      }
+    }
+    return ass;
   }
 
 }

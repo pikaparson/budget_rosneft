@@ -5,26 +5,14 @@ import 'package:budget_rosneft/DataBase/DB_create.dart';
 import  'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/services.dart';
 
-class Statistics extends StatelessWidget {
+class Statistics extends StatefulWidget {
   const Statistics({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      // убирает баннер debug
-        debugShowCheckedModeBanner: false,
-        home: const StatisticsPage());
-  }
+  State<Statistics> createState() => _HomePageState();
 }
 
-class StatisticsPage extends StatefulWidget {
-  const StatisticsPage({Key? key}) : super(key: key);
-
-  @override
-  State<StatisticsPage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<StatisticsPage> {
+class _HomePageState extends State<Statistics> {
   // Все журналы
   List<Map<String, dynamic>> _journals = [];
   List<Map<String, dynamic>> _journalsCategory = [];

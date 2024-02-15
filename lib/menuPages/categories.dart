@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 //import 'package:budget_rosneft/data_base/transaction_category.dart';
@@ -93,8 +94,11 @@ class _HomePageState extends State<CategoriesPage> {
                     return DropdownMenuItem<int>(child: Text(e["name"]), value: e["id"],);
                   }).toList(),
                   onChanged: (t) {
-                    transactionType = t!;
-                  }),
+                    setState(() {
+                      transactionType = t!;
+                    });
+                  },
+                  ),
               //добавление нового или обновление объекта
               ElevatedButton(
                 onPressed: () async {

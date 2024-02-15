@@ -34,11 +34,6 @@ class _MyHomePageState extends State<MyExchangeRate> {
     getData();
   }
 
-  fromJson(Map<String, dynamic> json) {
-    log('HERE');
-
-  }
-
   void getData() async {
     try {
       var response = await Dio()
@@ -58,7 +53,6 @@ class _MyHomePageState extends State<MyExchangeRate> {
           valueList.add(jsonList.valute?.gBP);
           valueList.add(jsonList.valute?.aED);
           setState(() {});
-          log('${valueList[0]?.name}');
       } else {
         print(response.statusCode);
       }
@@ -79,7 +73,13 @@ class _MyHomePageState extends State<MyExchangeRate> {
       body: ListView.builder(
           itemCount: valueList.length,
           itemBuilder: (BuildContext context, int index) {
-            return Card(child: Text('${valueList[index]!.name}'));
+            return Card(
+              margin: const EdgeInsets.all(15),
+              child: ListTile(
+                title: Text('${valueList[index]!.name}', style: TextStyle(fontSize: 20),),
+                subtitle: Text('${valueList[index]!.value}', style: TextStyle(fontSize: 18, color: Colors.grey[800]),),
+              ),
+            );
           }),
     );
   }
