@@ -43,6 +43,13 @@ class Menu extends StatelessWidget {
             ),
 
             // SizedBox(height: 10),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(context, '/mapLesson', (route) => true);
+              },
+              child: Text('Карта', style: TextStyle(fontSize: 12, color: Colors.blueGrey[800])),
+            ),
           ],
         ),
       )

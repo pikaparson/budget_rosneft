@@ -8,6 +8,9 @@ import 'package:budget_rosneft/menuPages/types.dart';
 import 'package:budget_rosneft/menuPages/categories.dart';
 import 'package:budget_rosneft/pages/transactions.dart';
 
+import 'mapPages/mapDBpage.dart';
+import 'menuPages/map.dart';
+
 void main() async {
   runApp(MaterialApp(
     // Удалить баннер отладки
@@ -24,7 +27,8 @@ void main() async {
       '/statistics' : (context) => Statistics(),
       '/returnPDF' : (context) => returnPDF(),
       '/exchangerate': (context) => ExchangeRate(),
-
+      '/mapLesson': (context) => MapLesson(),
+      '/mapDB': (context) => MapDB(),
     },
   ));
 }
