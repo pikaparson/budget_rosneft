@@ -25,9 +25,10 @@ class SQLHelperMap  {
         color TEXT NOT NULL
       )
       """);
+
       await database.insert('poligons',
-                            {'name': 'CircleLayer', 'coordinates': '56.3, 84.4', 'color': 'Зеленый'},
-                            conflictAlgorithm: sql.ConflictAlgorithm.replace);
+          {'name': 'CircleLayer', 'coordinates': '56.3, 84.4', 'color': 'Зеленый'},
+          conflictAlgorithm: sql.ConflictAlgorithm.replace);
     });
   }
 
@@ -39,7 +40,8 @@ class SQLHelperMap  {
 
   Future<String> getPolygonItemsAsString() async {
     final sql.Database? db = await database;
-    String stringHelper = '${await db?.rawQuery('SELECT id, name, coordinates, color createdAt FROM poligons')}';
+
+    String stringHelper = '${await db?.rawQuery('SELECT id, name, coordinates, color FROM poligons')}';
     late String string = ' ';
     for( int i = 0; i < stringHelper.length; i++){
       if (stringHelper[i] == '}') {

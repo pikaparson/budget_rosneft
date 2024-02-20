@@ -10,15 +10,12 @@ class MapDB extends StatefulWidget {
 }
 
 class _MapDBState extends State<MapDB> {
-  String text = '';
-
-  Future<void> createText() async {
-    text = '${await SQLHelperMap().getPolygonItemsAsString()}';
+  //String text = '';
+  Future<String> createText() async {
+    return '${await SQLHelperMap().getPolygonItemsAsString()}';
   }
-
   @override
   Widget build(BuildContext context) {
-    createText();
     return Scaffold(
       backgroundColor: Colors.blueGrey[400],
       appBar: AppBar(
@@ -27,12 +24,12 @@ class _MapDBState extends State<MapDB> {
         centerTitle: true,
       ),
       body: Center(
-        child: Text('$text', style: TextStyle(fontSize: 15),)//FutureBuilder(
-    //        future: SQLHelperMap().getPolygonItemsAsString(),
-    //        builder: (context, snapshot) {
-    //          return Text('$snapshot.data');
-    //        }
-    //    ),
+        child: FutureBuilder( //Text('${createText()}', style: TextStyle(fontSize: 15),)//
+            future: createText(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return Text('${snapshot.data}');
+            }
+        ),
       ),
     );
   }

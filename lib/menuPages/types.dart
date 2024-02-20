@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:budget_rosneft/DataBase/DB_create.dart';
 
-
-
 class Types extends StatelessWidget {
   const Types({Key? key}) : super(key: key);
 
