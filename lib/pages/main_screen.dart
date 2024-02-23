@@ -37,23 +37,23 @@ class _MainScreenState extends State<MainScreen> {
         bottomNavigationBar: BottomNavigationBar(
           items: [
             BottomNavigationBarItem(
-              backgroundColor: Colors.blueGrey[200],
+              backgroundColor: Colors.blueGrey[300],
               icon: Icon(Icons.format_list_numbered),
               label: 'Транзакции',
             ),
             BottomNavigationBarItem(
-                backgroundColor: Colors.blueGrey[200],
+                backgroundColor: Colors.blueGrey[300],
                 icon: Icon(Icons.monetization_on_outlined),
                 label: 'Курс валют'
             ),
             BottomNavigationBarItem(
-                backgroundColor: Colors.blueGrey[200],
+                backgroundColor: Colors.blueGrey[300],
                 icon: Icon(Icons.menu_open_outlined),
                 label: 'Меню'
             ),
           ],
           currentIndex: _currentPage,
-          fixedColor: Colors.blueGrey[800],
+          fixedColor: Colors.blueGrey[900],
           onTap: (int intIndex) {
             setState(() {
               _currentPage = intIndex;

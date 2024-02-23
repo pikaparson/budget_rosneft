@@ -7,11 +7,11 @@ class Menu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[400],
+      backgroundColor: Colors.blueGrey[200],
       appBar: AppBar(
         title: Text('Меню'),
         centerTitle: true,
-        backgroundColor: Colors.blueGrey[700],
+        backgroundColor: Colors.blueGrey[400],
       ),
       body: Center(
         child: Column(

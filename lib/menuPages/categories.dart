@@ -1,32 +1,14 @@
-import 'dart:developer';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-//import 'package:budget_rosneft/data_base/transaction_category.dart';
 import 'package:budget_rosneft/DataBase/DB_create.dart';
 
-//ВМЕСТО ТИПА ПИШЕТ ФИГНЮ
-
-class Categories extends StatelessWidget {
+class Categories extends StatefulWidget {
   const Categories({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      // убирает баннер debug
-        debugShowCheckedModeBanner: false,
-        home: const CategoriesPage());
-  }
+  State<Categories> createState() => _CategoriesState();
 }
 
-class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({Key? key}) : super(key: key);
-
-  @override
-  State<CategoriesPage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<CategoriesPage> {
+class _CategoriesState extends State<Categories> {
   // Все журналы
   List<Map<String, dynamic>> _journals = [];
   List<Map<String, dynamic>> _journalsTypes = [];
@@ -159,10 +141,10 @@ class _HomePageState extends State<CategoriesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[400],
+      backgroundColor: Colors.blueGrey[200],
       appBar: AppBar(
         title: const Text('Категории транзакций'),
-        backgroundColor: Colors.blueGrey[700],
+        backgroundColor: Colors.blueGrey[400],
         centerTitle: true,
       ),
       body: _isLoading

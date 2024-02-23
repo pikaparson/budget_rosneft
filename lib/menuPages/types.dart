@@ -1,26 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:budget_rosneft/DataBase/DB_create.dart';
 
-class Types extends StatelessWidget {
+class Types extends StatefulWidget {
   const Types({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      // убирает баннер debug
-        debugShowCheckedModeBanner: false,
-        home: const TypesPage());
-  }
+  State<Types> createState() => _TypesState();
 }
 
-class TypesPage extends StatefulWidget {
-  const TypesPage({Key? key}) : super(key: key);
-
-  @override
-  State<TypesPage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<TypesPage> {
+class _TypesState extends State<Types> {
   // Все журналы
   List<Map<String, dynamic>> _journals = [];
   bool _isLoading = true;
@@ -166,10 +154,10 @@ class _HomePageState extends State<TypesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[400],
+      backgroundColor: Colors.blueGrey[200],
       appBar: AppBar(
         title: const Text('Типы транзакции'),
-        backgroundColor: Colors.blueGrey[700],
+        backgroundColor: Colors.blueGrey[400],
         centerTitle: true,
       ),
       body: _isLoading

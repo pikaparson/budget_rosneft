@@ -18,7 +18,7 @@ class _MapLessonState extends State<MapLesson> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Карта'),
-        backgroundColor: Colors.blueGrey[700],
+        backgroundColor: Colors.blueGrey[400],
         centerTitle: true,
       ),
       body: FlutterMap(

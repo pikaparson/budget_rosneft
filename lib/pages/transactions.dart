@@ -163,10 +163,10 @@ class _HomePageState extends State<Statistics> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[400],
+      backgroundColor: Colors.blueGrey[200],
       appBar: AppBar(
         title: const Text('Транзакции'),
-        backgroundColor: Colors.blueGrey[700],
+        backgroundColor: Colors.blueGrey[400],
         centerTitle: true,
       ),
       body: _isLoading

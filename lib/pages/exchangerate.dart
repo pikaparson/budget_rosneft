@@ -6,26 +6,14 @@ import 'package:dio/dio.dart';
 
 import '../rateModel/model.dart';
 
-class ExchangeRate extends StatelessWidget {
+class ExchangeRate extends StatefulWidget {
   const ExchangeRate({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const MyExchangeRate(),
-    );
-  }
+  State<ExchangeRate> createState() => _HomePageState();
 }
 
-class MyExchangeRate extends StatefulWidget {
-  const MyExchangeRate({Key? key}) : super(key: key);
-
-  @override
-  State<MyExchangeRate> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyExchangeRate> {
+class _HomePageState extends State<ExchangeRate> {
 
   List<AUD?> valueList = [];
 
@@ -64,10 +52,10 @@ class _MyHomePageState extends State<MyExchangeRate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[400],
+      backgroundColor: Colors.blueGrey[200],
       appBar: AppBar(
         title: const Text('Курс валюты'),
-        backgroundColor: Colors.blueGrey[700],
+        backgroundColor: Colors.blueGrey[400],
         centerTitle: true,
       ),
       body: ListView.builder(
