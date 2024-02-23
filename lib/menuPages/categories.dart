@@ -158,7 +158,6 @@ class _CategoriesState extends State<Categories> {
           margin: const EdgeInsets.all(15),
           child: ListTile(
               title: Text(_journals[index]['name']),
-              //в интернете предлагают setState, но как в билде его использовать, если так вообще можно?
               subtitle: FutureBuilder<String>(
                 future: SQLHelper().getTypeOfCategory(_journals[index]['type']),
                 builder: (context, snapshot) {

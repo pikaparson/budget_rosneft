@@ -54,7 +54,7 @@ class _HomePageState extends State<ExchangeRate> {
     return Scaffold(
       backgroundColor: Colors.blueGrey[200],
       appBar: AppBar(
-        title: const Text('Курс валюты'),
+        title: const Text('Курс валют'),
         backgroundColor: Colors.blueGrey[400],
         centerTitle: true,
       ),

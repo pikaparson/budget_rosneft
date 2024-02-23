@@ -39,7 +39,9 @@ class _HomePageState extends State<Statistics> {
   double count = 0;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _moneyController = TextEditingController();
- // final TextEditingController _moneyController = TextEditingController();
+
+
+
   // Эта функция будет активирована при нажатии floatingActionB
   // Она также будет активирована, когда обновляем элемент
   void _showForm(int? id) async {
@@ -50,6 +52,7 @@ class _HomePageState extends State<Statistics> {
       _nameController.text = existingJournal['name'];
       _moneyController.text = existingJournal['count'];
     }
+
     // нижняя шторка для добавления объекта
     showModalBottomSheet(
         context: context,
@@ -185,7 +188,6 @@ class _HomePageState extends State<Statistics> {
                 builder: (context, snapshot) {
                   return Text('${snapshot.data}');}
               ),
-              //Text('${SQLHelper().getCategoryOfTransaction(_journals[index]['id'])}'),
               trailing: SizedBox(
                 width: 100,
                 child: Row(
