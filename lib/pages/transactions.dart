@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:budget_rosneft/DataBase/DB_create.dart';
-import  'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/services.dart';
 
 class Statistics extends StatefulWidget {
@@ -50,7 +47,7 @@ class _HomePageState extends State<Statistics> {
       // id != null -> update an existing item
       final existingJournal = _journals.firstWhere((element) => element['id'] == id);
       _nameController.text = existingJournal['name'];
-      _moneyController.text = existingJournal['count'];
+      _moneyController.text = existingJournal['count'].toString();
     }
 
     // нижняя шторка для добавления объекта
@@ -194,7 +191,11 @@ class _HomePageState extends State<Statistics> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () => _showForm(_journals[index]['id']),
+                      onPressed: () {
+                        setState(() {
+                          _showForm(_journals[index]['id']);
+                        });
+                      },
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete),
@@ -209,7 +210,11 @@ class _HomePageState extends State<Statistics> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         child: const Icon(Icons.add),
-        onPressed: () => _showForm(null),
+        onPressed: () {
+          setState(() {
+            _showForm(null);
+          });
+        }
       ),
     );
   }

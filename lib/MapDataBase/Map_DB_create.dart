@@ -6,6 +6,7 @@ import 'package:sqflite/sqflite.dart' as sql;
 class SQLHelperMap  {
   static int flag = 0;
   static sql.Database? _database;
+
   Future<sql.Database?> get database async {
     if (_database != null) {
       return _database;
@@ -25,7 +26,6 @@ class SQLHelperMap  {
         color TEXT NOT NULL
       )
       """);
-
       await database.insert('poligons',
           {'name': 'CircleLayer', 'coordinates': '56.3, 84.4', 'color': 'Зеленый'},
           conflictAlgorithm: sql.ConflictAlgorithm.replace);
@@ -56,4 +56,5 @@ class SQLHelperMap  {
     }
     return string;
   }
+
 }

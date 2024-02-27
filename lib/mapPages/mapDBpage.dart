@@ -1,7 +1,7 @@
-import 'dart:typed_data';
 import 'package:budget_rosneft/MapDataBase/Map_DB_create.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 class MapDB extends StatefulWidget {
   const MapDB({super.key});
 
@@ -14,6 +14,7 @@ class _MapDBState extends State<MapDB> {
   Future<String> createText() async {
     return '${await SQLHelperMap().getPolygonItemsAsString()}';
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
