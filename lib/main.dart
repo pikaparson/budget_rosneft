@@ -32,3 +32,46 @@ void main() async {
     },
   ));
 }
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DistanceCalculatorDialog</class>
+ <widget class="QDialog" name="DistanceCalculatorDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>200</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Distance Calculator</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="instructionLabel">
+     <property name="text">
+      <string>Select two points on the map and click the button below.</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="calculateButton">
+     <property name="text">
+      <string>Calculate Distance</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="resultLabel">
+     <property name="text">
+      <string>Distance: </string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
