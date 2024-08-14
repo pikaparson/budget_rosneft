@@ -34,57 +34,43 @@ void main() async {
 }
 
 
-__init__.py
-  def classFactory(iface):
-    from .DISTANCE_CALCULATOR import DistanceCalculatorPlugin
-    return DistanceCalculatorPlugin(iface)
-
-DISTANCE_CALCULATOR.py
-      from qgis.core import QgsProject, QgsPointXY, QgsFeature
+__init__.py:def classFactory(iface):
+from .DISTANCE_CALCULATOR import DistanceCalculatorPlugin
+return DistanceCalculatorPlugin(iface)
+DISTANCE_CALCULATOR.py:from qgis.core import QgsProject, QgsPointXY, QgsFeature
 from qgis.gui import QgsMapCanvas
 from qgis.PyQt.QtWidgets import QAction, QMessageBox
 from .DISTANCE_CALCULATOR_dialog import DistanceCalculatorDialog
-
 class DistanceCalculatorPlugin:
-    def __init__(self, iface):
-        self.iface = iface
-        self.canvas = iface.mapCanvas()
-        self.dlg = None
-
-    def initGui(self):
-        icon_path = ':/plugins/distance_calculator/icon.png'
-        self.action = QAction('Calculate Distance', self.iface.mainWindow())
-        self.action.triggered.connect(self.run)
-
-        self.iface.addToolBarIcon(self.action)
-        self.iface.addPluginToMenu('Distance Calculator', self.action)
-
-    def unload(self):
-        self.iface.removePluginMenu('Distance Calculator', self.action)
-        self.iface.removeToolBarIcon(self.action)
-
-    def run(self):
-        if self.dlg is None:
-            self.dlg = DistanceCalculatorDialog()
-            self.dlg.calculateButton.clicked.connect(self.calculate_distance)
-        
-        self.dlg.show()
-        self.dlg.exec_()
-
-    def calculate_distance(self):
-        selected_features = self.get_selected_features()
-
-        if len(selected_features) != 2:
-            QMessageBox.warning(self.dlg, "Ошибка", "Пожалуйста, выберите ровно две точки.")
-            return
-
-        point1 = selected_features[0].geometry().asPoint()
-        point2 = selected_features[1].geometry().asPoint()
-
-        distance = point1.distance(point2)
-        self.dlg.resultLabel.setText(f"Расстояние: {distance:.2f} метров")
-
-    def get_selected_features(self):
+def __init__(self, iface):
+self.iface = iface
+self.canvas = iface.mapCanvas()
+self.dlg = None
+def initGui(self):
+icon_path = ':/plugins/distance_calculator/icon.png'
+self.action = QAction('Calculate Distance', self.iface.mainWindow())
+self.action.triggered.connect(self.run)
+self.iface.addToolBarIcon(self.action)
+self.iface.addPluginToMenu('Distance Calculator', self.action)
+def unload(self):
+self.iface.removePluginMenu('Distance Calculator', self.action)
+self.iface.removeToolBarIcon(self.action)
+def run(self):
+if self.dlg is None:
+  self.dlg = DistanceCalculatorDialog()
+  self.dlg.calculateButton.clicked.connect(self.calculate_distance)
+self.dlg.show()
+self.dlg.exec_()
+def calculate_distance(self):
+selected_features = self.get_selected_features()
+if len(selected_features) != 2:
+QMessageBox.warning(self.dlg, "Ошибка", "Пожалуйста, выберите ровно две точки.")
+return
+point1 = selected_features[0].geometry().asPoint()
+point2 = selected_features[1].geometry().asPoint()
+distance = point1.distance(point2)
+self.dlg.resultLabel.setText(f"Расстояние: {distance:.2f} метров")
+def get_selected_features(self):
         layers = QgsProject.instance().mapLayers().values()
         selected_features = []
         for layer in layers:
