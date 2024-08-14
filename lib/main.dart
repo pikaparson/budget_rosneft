@@ -34,121 +34,209 @@ void main() async {
 }
 
 
-плагин
-  from qgis.PyQt.QtCore import *
-from qgis.PyQt.QtWidgets import *
-from qgis.core import *
-from qgis.utils import iface
-import math
+метадата
 
-class DistanceCalculatorPlugin:
-
-    def __init__(self, iface):
-        self.iface = iface
-        self.action = QAction("Calculate Distance", self.iface.mainWindow())
-        self.action.triggered.connect(self.run)
-        self.selectedPoints = []
-
-    def initGui(self):
-        self.iface.addPluginToMenu("Calculate Distance", self.action)
-        self.iface.addToolBarIcon(self.action)
-
-    def unload(self):
-        self.iface.removePluginMenu("Calculate Distance", self.action)
-        self.iface.removeToolBarIcon(self.action)
-    
-    def run(self):
-        self.dialog = DistanceCalculatorDialog(self.iface, self)
-        self.dialog.show()
-
-class DistanceCalculatorDialog(QDialog):
-
-    def __init__(self, iface, plugin):
-        QDialog.__init__(self)
-        self.iface = iface
-        self.plugin = plugin
-        self.setWindowTitle("Calculate Distance")
-        self.setGeometry(100, 100, 400, 200)
-
-        self.layerComboBox1 = QComboBox()
-        self.layerComboBox2 = QComboBox()
-        self.load_layers()
-
-        self.selectButton1 = QPushButton("Select First Point")
-        self.selectButton2 = QPushButton("Select Second Point")
-        self.calculateButton = QPushButton("Calculate Distance")
-        self.calculateButton.setEnabled(False)
-
-        self.selectButton1.clicked.connect(lambda: self.select_point(1))
-        self.selectButton2.clicked.connect(lambda: self.select_point(2))
-        self.calculateButton.clicked.connect(self.calculate_distance)
-
-        layout = QVBoxLayout()
-        layout.addWidget(QLabel("Select layer for first point:"))
-        layout.addWidget(self.layerComboBox1)
-        layout.addWidget(self.selectButton1)
-        layout.addWidget(QLabel("Select layer for second point (can be the same):"))
-        layout.addWidget(self.layerComboBox2)
-        layout.addWidget(self.selectButton2)
-        layout.addWidget(self.calculateButton)
-        self.setLayout(layout)
-    
-    def load_layers(self):
-        self.layerComboBox1.clear()
-        self.layerComboBox2.clear()
-        layers = QgsProject.instance().mapLayers().values()
-        for layer in layers:
-            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QgsWkbTypes.PointGeometry:
-                self.layerComboBox1.addItem(layer.name(), layer)
-                self.layerComboBox2.addItem(layer.name(), layer)
-    
-    def select_point(self, point_number):
-        layer = self.layerComboBox1.currentData() if point_number == 1 else self.layerComboBox2.currentData()
-        
-        if layer:
-            self.iface.setActiveLayer(layer)
-            self.iface.mapCanvas().setMapTool(self.iface.mapCanvas().mapToolSelect())
-            self.iface.mapCanvas().mapToolSelect().selectionChanged.connect(lambda: self.point_selected(point_number))
-    
-    def point_selected(self, point_number):
-        layer = self.layerComboBox1.currentData() if point_number == 1 else self.layerComboBox2.currentData()
-        selected_features = layer.selectedFeatures()
-
-        if len(selected_features) > 0:
-            point = selected_features[0].geometry().asPoint()
-            if point_number > len(self.plugin.selectedPoints):
-                self.plugin.selectedPoints.append(point)
-            else:
-                self.plugin.selectedPoints[point_number - 1] = point
-            
-            if len(self.plugin.selectedPoints) == 2:
-                self.calculateButton.setEnabled(True)
-            
-            self.iface.mapCanvas().mapToolSelect().selectionChanged.disconnect()
-
-    def calculate_distance(self):
-        if len(self.plugin.selectedPoints) == 2:
-            point1 = self.plugin.selectedPoints[0]
-            point2 = self.plugin.selectedPoints[1]
-            distance = math.sqrt(math.pow(point2.x() - point1.x(), 2) + math.pow(point2.y() - point1.y(), 2))
-            QMessageBox.information(self, "Distance", f"The distance between the points is {distance} units.")
+  [general]
+name=Distance Calculator
+description=Plugin to calculate distance between two points
+version=1.0
+qgisMinimumVersion=3.0
+author=Ваше Имя
+email=адрес@почты.com
 
 
 
 инит
-
-              def name():
-    return "Distance Calculator"
-
-def description():
-    return "Plugin to calculate distance between two points in different layers"
-
-def version():
-    return "1.0"
-
-def qgisMinimumVersion():
-    return "3.0"
-
-def classFactory(iface):
-    from .distance_calculator import DistanceCalculatorPlugin
+  def classFactory(iface):
+    from .DISTANCE_CALCULATOR import DistanceCalculatorPlugin
     return DistanceCalculatorPlugin(iface)
+
+дистанс кальк
+
+      from qgis.core import QgsProject, QgsPointXY, QgsFeature
+from qgis.gui import QgsMapCanvas
+from qgis.PyQt.QtWidgets import QAction, QMessageBox
+from .DISTANCE_CALCULATOR_dialog import DistanceCalculatorDialog
+
+class DistanceCalculatorPlugin:
+    def __init__(self, iface):
+        self.iface = iface
+        self.canvas = iface.mapCanvas()
+        self.dlg = None
+
+    def initGui(self):
+        icon_path = ':/plugins/distance_calculator/icon.png'
+        self.action = QAction('Calculate Distance', self.iface.mainWindow())
+        self.action.triggered.connect(self.run)
+
+        self.iface.addToolBarIcon(self.action)
+        self.iface.addPluginToMenu('Distance Calculator', self.action)
+
+    def unload(self):
+        self.iface.removePluginMenu('Distance Calculator', self.action)
+        self.iface.removeToolBarIcon(self.action)
+
+    def run(self):
+        if self.dlg is None:
+            self.dlg = DistanceCalculatorDialog()
+            self.dlg.calculateButton.clicked.connect(self.calculate_distance)
+        
+        self.dlg.show()
+        self.dlg.exec_()
+
+    def calculate_distance(self):
+        selected_features = self.get_selected_features()
+
+        if len(selected_features) != 2:
+            QMessageBox.warning(self.dlg, "Ошибка", "Пожалуйста, выберите ровно две точки.")
+            return
+
+        point1 = selected_features[0].geometry().asPoint()
+        point2 = selected_features[1].geometry().asPoint()
+
+        distance = point1.distance(point2)
+        self.dlg.resultLabel.setText(f"Расстояние: {distance:.2f} метров")
+
+    def get_selected_features(self):
+        layers = QgsProject.instance().mapLayers().values()
+        selected_features = []
+        for layer in layers:
+            if layer.selectedFeatureCount() > 0:
+                selected_features.extend(layer.selectedFeatures())
+        return selected_features
+
+
+дистанс кальк диалог
+from qgis.PyQt import QtWidgets, uic
+import os
+
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'DISTANCE_CALCULATOR_dialog_base.ui'))
+
+class DistanceCalculatorDialog(QtWidgets.QDialog, FORM_CLASS):
+    def __init__(self, parent=None):
+        super(DistanceCalculatorDialog, self).__init__(parent)
+        self.setupUi(self)
+
+ юи
+
+         <?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>DistanceCalculatorDialogBase</class>
+    <widget class="QDialog" name="DistanceCalculatorDialogBase">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>400</width>
+                <height>300</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Distance Calculator</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+                <widget class="QWidget" name="formLayoutWidget">
+                    <layout class="QFormLayout" name="formLayout">
+                        <property name="fieldGrowthPolicy">
+                            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                        </property>
+                        
+                        <item row="0" column="0">
+                            <widget class="QLabel" name="labelPoint1">
+                                <property name="text">
+                                    <string>Point 1 Coordinates</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item row="0" column="1">
+                            <widget class="QLineEdit" name="lineEditPoint1">
+                                <property name="placeholderText">
+                                    <string>format: x,y</string>
+                                </property>
+                            </widget>
+                        </item>
+                        
+                        <item row="1" column="0">
+                            <widget class="QLabel" name="labelPoint2">
+                                <property name="text">
+                                    <string>Point 2 Coordinates</string>
+                                </property>
+                            </widget>
+                        </item>
+                        <item row="1" column="1">
+                            <widget class="QLineEdit" name="lineEditPoint2">
+                                <property name="placeholderText">
+                                    <string>format: x,y</string>
+                                </property>
+                            </widget>
+                        </item>
+                        
+                        <item row="2" column="0" colspan="2">
+                            <layout class="QHBoxLayout" name="horizontalLayout">
+                                <property name="spacing">
+                                    <number>6</number>
+                                </property>
+                                <property name="sizeConstraint">
+                                    <enum>QLayout::SetDefaultConstraint</enum>
+                                </property>
+                                <item>
+                                    <spacer name="horizontalSpacer">
+                                        <property name="orientation">
+                                            <enum>Qt::Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>QSizePolicy::Expanding</enum>
+                                        </property>
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </item>
+                                <item>
+                                    <widget class="QPushButton" name="buttonCalculate">
+                                        <property name="text">
+                                            <string>Calculate</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item>
+                                    <spacer name="horizontalSpacer_2">
+                                        <property name="orientation">
+                                            <enum>Qt::Horizontal</enum>
+                                        </property>
+                                        <property name="sizeType">
+                                            <enum>QSizePolicy::Expanding</enum>
+                                        </property>
+                                        <property name="minimumSize">
+                                            <size>
+                                                <width>20</width>
+                                                <height>20</height>
+                                            </size>
+                                        </property>
+                                    </spacer>
+                                </item>
+                            </layout>
+                        </item>
+                        <item row="3" column="0" colspan="2">
+                            <widget class="QLabel" name="labelResult">
+                                <property name="text">
+                                    <string/>
+                                </property>
+                                <property name="alignment">
+                                    <set>Qt::AlignCenter</set>
+                                </property>
+                            </widget>
+                        </item>
+                    </layout>
+                </widget>
+            </item>
+        </layout>
+    </widget>
+    <resources/>
+    <connections/>
+</ui> 
