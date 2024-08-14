@@ -34,12 +34,12 @@ void main() async {
 }
 
 
-
-
-from qgis.PyQt.QtCore import *
+плагин
+  from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtWidgets import *
 from qgis.core import *
 from qgis.utils import iface
+import math
 
 class DistanceCalculatorPlugin:
 
@@ -47,6 +47,7 @@ class DistanceCalculatorPlugin:
         self.iface = iface
         self.action = QAction("Calculate Distance", self.iface.mainWindow())
         self.action.triggered.connect(self.run)
+        self.selectedPoints = []
 
     def initGui(self):
         self.iface.addPluginToMenu("Calculate Distance", self.action)
@@ -57,72 +58,97 @@ class DistanceCalculatorPlugin:
         self.iface.removeToolBarIcon(self.action)
     
     def run(self):
-        self.dialog = DistanceCalculatorDialog(self.iface)
+        self.dialog = DistanceCalculatorDialog(self.iface, self)
         self.dialog.show()
 
 class DistanceCalculatorDialog(QDialog):
 
-    def __init__(self, iface):
+    def __init__(self, iface, plugin):
         QDialog.__init__(self)
         self.iface = iface
+        self.plugin = plugin
         self.setWindowTitle("Calculate Distance")
-        self.setGeometry(100, 100, 300, 100)
+        self.setGeometry(100, 100, 400, 200)
 
         self.layerComboBox1 = QComboBox()
         self.layerComboBox2 = QComboBox()
-        self.pointComboBox1 = QComboBox()
-        self.pointComboBox2 = QComboBox()
-        
+        self.load_layers()
+
+        self.selectButton1 = QPushButton("Select First Point")
+        self.selectButton2 = QPushButton("Select Second Point")
         self.calculateButton = QPushButton("Calculate Distance")
+        self.calculateButton.setEnabled(False)
+
+        self.selectButton1.clicked.connect(lambda: self.select_point(1))
+        self.selectButton2.clicked.connect(lambda: self.select_point(2))
         self.calculateButton.clicked.connect(self.calculate_distance)
 
         layout = QVBoxLayout()
         layout.addWidget(QLabel("Select layer for first point:"))
         layout.addWidget(self.layerComboBox1)
-        layout.addWidget(QLabel("Select first point:"))
-        layout.addWidget(self.pointComboBox1)
-        layout.addWidget(QLabel("Select layer for second point:"))
+        layout.addWidget(self.selectButton1)
+        layout.addWidget(QLabel("Select layer for second point (can be the same):"))
         layout.addWidget(self.layerComboBox2)
-        layout.addWidget(QLabel("Select second point:"))
-        layout.addWidget(self.pointComboBox2)
+        layout.addWidget(self.selectButton2)
         layout.addWidget(self.calculateButton)
-        
         self.setLayout(layout)
-
-        self.populate_layers()
-        self.layerComboBox1.currentIndexChanged.connect(self.populate_points1)
-        self.layerComboBox2.currentIndexChanged.connect(self.populate_points2)
     
-    def populate_layers(self):
-        layers = [layer for layer in QgsProject.instance().mapLayers().values() if isinstance(layer, QgsVectorLayer) and layer.geometryType() == QgsWkbTypes.PointGeometry]
+    def load_layers(self):
+        self.layerComboBox1.clear()
+        self.layerComboBox2.clear()
+        layers = QgsProject.instance().mapLayers().values()
         for layer in layers:
-            self.layerComboBox1.addItem(layer.name(), layer)
-            self.layerComboBox2.addItem(layer.name(), layer)
+            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QgsWkbTypes.PointGeometry:
+                self.layerComboBox1.addItem(layer.name(), layer)
+                self.layerComboBox2.addItem(layer.name(), layer)
+    
+    def select_point(self, point_number):
+        layer = self.layerComboBox1.currentData() if point_number == 1 else self.layerComboBox2.currentData()
         
-    def populate_points1(self):
-        self.pointComboBox1.clear()
-        layer = self.layerComboBox1.currentData()
         if layer:
-            features = layer.getFeatures()
-            for feature in features:
-                self.pointComboBox1.addItem(str(feature.id()), feature.geometry().asPoint())
+            self.iface.setActiveLayer(layer)
+            self.iface.mapCanvas().setMapTool(self.iface.mapCanvas().mapToolSelect())
+            self.iface.mapCanvas().mapToolSelect().selectionChanged.connect(lambda: self.point_selected(point_number))
     
-    def populate_points2(self):
-        self.pointComboBox2.clear()
-        layer = self.layerComboBox2.currentData()
-        if layer:
-            features = layer.getFeatures()
-            for feature in features:
-                self.pointComboBox2.addItem(str(feature.id()), feature.geometry().asPoint())
-    
+    def point_selected(self, point_number):
+        layer = self.layerComboBox1.currentData() if point_number == 1 else self.layerComboBox2.currentData()
+        selected_features = layer.selectedFeatures()
+
+        if len(selected_features) > 0:
+            point = selected_features[0].geometry().asPoint()
+            if point_number > len(self.plugin.selectedPoints):
+                self.plugin.selectedPoints.append(point)
+            else:
+                self.plugin.selectedPoints[point_number - 1] = point
+            
+            if len(self.plugin.selectedPoints) == 2:
+                self.calculateButton.setEnabled(True)
+            
+            self.iface.mapCanvas().mapToolSelect().selectionChanged.disconnect()
+
     def calculate_distance(self):
-        point1 = self.pointComboBox1.currentData()
-        point2 = self.pointComboBox2.currentData()
-        if point1 and point2:
-            distance = point1.distance(point2)
-            QMessageBox.information(self, "Distance", f"Distance: {distance:.2f} meters")
-        else:
-            QMessageBox.warning(self, "Error", "Please select both points")
+        if len(self.plugin.selectedPoints) == 2:
+            point1 = self.plugin.selectedPoints[0]
+            point2 = self.plugin.selectedPoints[1]
+            distance = math.sqrt(math.pow(point2.x() - point1.x(), 2) + math.pow(point2.y() - point1.y(), 2))
+            QMessageBox.information(self, "Distance", f"The distance between the points is {distance} units.")
+
+
+
+инит
+
+              def name():
+    return "Distance Calculator"
+
+def description():
+    return "Plugin to calculate distance between two points in different layers"
+
+def version():
+    return "1.0"
+
+def qgisMinimumVersion():
+    return "3.0"
 
 def classFactory(iface):
+    from .distance_calculator import DistanceCalculatorPlugin
     return DistanceCalculatorPlugin(iface)
