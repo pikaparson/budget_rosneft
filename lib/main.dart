@@ -71,143 +71,136 @@ point2 = selected_features[1].geometry().asPoint()
 distance = point1.distance(point2)
 self.dlg.resultLabel.setText(f"Расстояние: {distance:.2f} метров")
 def get_selected_features(self):
-        layers = QgsProject.instance().mapLayers().values()
-        selected_features = []
-        for layer in layers:
-            if layer.selectedFeatureCount() > 0:
-                selected_features.extend(layer.selectedFeatures())
-        return selected_features
-
+layers = QgsProject.instance().mapLayers().values()
+selected_features = []
+for layer in layers:
+if layer.selectedFeatureCount() > 0:
+selected_features.extend(layer.selectedFeatures())
+return selected_features
 DISTANCE_CALCULATOR_dialog.py
 from qgis.PyQt import QtWidgets, uic
 import os
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'DISTANCE_CALCULATOR_dialog_base.ui'))
-
 class DistanceCalculatorDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         super(DistanceCalculatorDialog, self).__init__(parent)
         self.setupUi(self)
-
 DISTANCE_CALCULATOR_dialog_base.ui
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>DistanceCalculatorDialogBase</class>
-    <widget class="QDialog" name="DistanceCalculatorDialogBase">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>400</width>
-                <height>300</height>
-            </rect>
-        </property>
-        <property name="windowTitle">
-            <string>Distance Calculator</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-                <widget class="QWidget" name="formLayoutWidget">
-                    <layout class="QFormLayout" name="formLayout">
-                        <property name="fieldGrowthPolicy">
-                            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-                        </property>
-                        
-                        <item row="0" column="0">
-                            <widget class="QLabel" name="labelPoint1">
-                                <property name="text">
-                                    <string>Point 1 Coordinates</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="0" column="1">
-                            <widget class="QLineEdit" name="lineEditPoint1">
-                                <property name="placeholderText">
-                                    <string>format: x,y</string>
-                                </property>
-                            </widget>
-                        </item>
-                        
-                        <item row="1" column="0">
-                            <widget class="QLabel" name="labelPoint2">
-                                <property name="text">
-                                    <string>Point 2 Coordinates</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item row="1" column="1">
-                            <widget class="QLineEdit" name="lineEditPoint2">
-                                <property name="placeholderText">
-                                    <string>format: x,y</string>
-                                </property>
-                            </widget>
-                        </item>
-                        
-                        <item row="2" column="0" colspan="2">
-                            <layout class="QHBoxLayout" name="horizontalLayout">
-                                <property name="spacing">
-                                    <number>6</number>
-                                </property>
-                                <property name="sizeConstraint">
-                                    <enum>QLayout::SetDefaultConstraint</enum>
-                                </property>
-                                <item>
-                                    <spacer name="horizontalSpacer">
-                                        <property name="orientation">
-                                            <enum>Qt::Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>QSizePolicy::Expanding</enum>
-                                        </property>
-                                        <property name="minimumSize">
-                                            <size>
-                                                <width>20</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                </item>
-                                <item>
-                                    <widget class="QPushButton" name="buttonCalculate">
-                                        <property name="text">
-                                            <string>Calculate</string>
-                                        </property>
-                                    </widget>
-                                </item>
-                                <item>
-                                    <spacer name="horizontalSpacer_2">
-                                        <property name="orientation">
-                                            <enum>Qt::Horizontal</enum>
-                                        </property>
-                                        <property name="sizeType">
-                                            <enum>QSizePolicy::Expanding</enum>
-                                        </property>
-                                        <property name="minimumSize">
-                                            <size>
-                                                <width>20</width>
-                                                <height>20</height>
-                                            </size>
-                                        </property>
-                                    </spacer>
-                                </item>
-                            </layout>
-                        </item>
-                        <item row="3" column="0" colspan="2">
-                            <widget class="QLabel" name="labelResult">
-                                <property name="text">
-                                    <string/>
-                                </property>
-                                <property name="alignment">
-                                    <set>Qt::AlignCenter</set>
-                                </property>
-                            </widget>
-                        </item>
-                    </layout>
-                </widget>
-            </item>
-        </layout>
-    </widget>
-    <resources/>
-    <connections/>
+<class>DistanceCalculatorDialogBase</class>
+<widget class="QDialog" name="DistanceCalculatorDialogBase">
+<property name="geometry">
+<rect>
+<x>0</x>
+<y>0</y>
+<width>400</width>
+<height>300</height>
+</rect>
+</property>
+<property name="windowTitle">
+<string>Distance Calculator</string>
+</property>
+<layout class="QVBoxLayout" name="verticalLayout">
+<item>
+<widget class="QWidget" name="formLayoutWidget">
+<layout class="QFormLayout" name="formLayout">
+<property name="fieldGrowthPolicy">
+<enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+</property>                      
+<item row="0" column="0">
+<widget class="QLabel" name="labelPoint1">
+<property name="text">
+<string>Point 1 Coordinates</string>
+</property>
+</widget>
+</item>
+<item row="0" column="1">
+<widget class="QLineEdit" name="lineEditPoint1">
+<property name="placeholderText">
+<string>format: x,y</string>
+</property>
+</widget>
+</item>
+<item row="1" column="0">
+<widget class="QLabel" name="labelPoint2">
+<property name="text">
+<string>Point 2 Coordinates</string>
+</property>
+</widget>
+</item>
+<item row="1" column="1">
+<widget class="QLineEdit" name="lineEditPoint2">
+<property name="placeholderText">
+<string>format: x,y</string>
+</property>
+</widget>
+</item>                        
+<item row="2" column="0" colspan="2">
+<layout class="QHBoxLayout" name="horizontalLayout">
+<property name="spacing">
+<number>6</number>
+</property>
+<property name="sizeConstraint">
+<enum>QLayout::SetDefaultConstraint</enum>
+</property>
+<item>
+<spacer name="horizontalSpacer">
+<property name="orientation">
+<enum>Qt::Horizontal</enum>
+</property>
+<property name="sizeType">
+<enum>QSizePolicy::Expanding</enum>
+</property>
+<property name="minimumSize">
+<size>
+<width>20</width>
+<height>20</height>
+</size>
+</property>
+</spacer>
+</item>
+<item>
+<widget class="QPushButton" name="buttonCalculate">
+<property name="text">
+<string>Calculate</string>
+</property>
+</widget>
+</item>
+<item>
+<spacer name="horizontalSpacer_2">
+<property name="orientation">
+<enum>Qt::Horizontal</enum>
+</property>
+<property name="sizeType">
+<enum>QSizePolicy::Expanding</enum>
+</property>
+<property name="minimumSize">
+<size>
+<width>20</width>
+<height>20</height>
+</size>
+</property>
+</spacer>
+</item>
+</layout>
+</item>
+<item row="3" column="0" colspan="2">
+<widget class="QLabel" name="labelResult">
+<property name="text">
+<string/>
+</property>
+<property name="alignment">
+<set>Qt::AlignCenter</set>
+</property>
+</widget>
+</item>
+</layout>
+</widget>
+</item>
+</layout>
+</widget>
+<resources/>
+<connections/>
 </ui> 
