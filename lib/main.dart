@@ -34,25 +34,12 @@ void main() async {
 }
 
 
-метадата
-
-  [general]
-name=Distance Calculator
-description=Plugin to calculate distance between two points
-version=1.0
-qgisMinimumVersion=3.0
-author=Ваше Имя
-email=адрес@почты.com
-
-
-
-инит
+__init__.py
   def classFactory(iface):
     from .DISTANCE_CALCULATOR import DistanceCalculatorPlugin
     return DistanceCalculatorPlugin(iface)
 
-дистанс кальк
-
+DISTANCE_CALCULATOR.py
       from qgis.core import QgsProject, QgsPointXY, QgsFeature
 from qgis.gui import QgsMapCanvas
 from qgis.PyQt.QtWidgets import QAction, QMessageBox
@@ -105,8 +92,7 @@ class DistanceCalculatorPlugin:
                 selected_features.extend(layer.selectedFeatures())
         return selected_features
 
-
-дистанс кальк диалог
+DISTANCE_CALCULATOR_dialog.py
 from qgis.PyQt import QtWidgets, uic
 import os
 
@@ -118,9 +104,8 @@ class DistanceCalculatorDialog(QtWidgets.QDialog, FORM_CLASS):
         super(DistanceCalculatorDialog, self).__init__(parent)
         self.setupUi(self)
 
- юи
-
-         <?xml version="1.0" encoding="UTF-8"?>
+DISTANCE_CALCULATOR_dialog_base.ui
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
     <class>DistanceCalculatorDialogBase</class>
     <widget class="QDialog" name="DistanceCalculatorDialogBase">
